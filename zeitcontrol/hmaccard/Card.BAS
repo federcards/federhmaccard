@@ -31,33 +31,39 @@
 
 Option Explicit
 
+
+#include AES.DEF
+#include SHA.DEF
+
+#include util.bas
+
+#include lib/hmac.bas
+#include lib/crypto.bas
+#include lib/hashcash_guardian.bas
+
+#include main_secret.bas
+
+
 #include Card.def
 
 
-'#include AES.DEF
-#include lib/hmac.bas
-'#include lib/crypto.bas
 
+command &H88 &H00 Greet(LC=0, data as string)
+   data="Federcard/HMACCARD"
+end command
 
+command &H88 &H02 CardUnlock(LC=0, data as string)
+    data = main_secret_unlock(data)
+end command
 
-EEPROM main_secret_encrypted as String
+command &H88 &H04 CardImport(LC=0, data as string)
+    data = main_secret_import(data)
+end command
 
-' This command just returns "Hello World" in response
-' Since no input data is required, LC is set to 0
-Command &H88 &H00 HelloWorld(LC=0, Data as String)
-   Data="Hello World"
-End Command
+command &H88 &H06 CardSetPassword(LC=0, data as string)
+    data = main_secret_set_password(data)
+end command
 
-' This command saves Data in EEPROM.
-' Since no output data is required, LE is disabled
-Command &H88 &H02 WriteData(Data as String, Disable LE)
-   ' Just copy it to EEPROM variable to save it
-   CardData=Data
-End Command
-
-' This command reads data written by WriteData and 
-' returns this data in response.
-' Since no input data is required, LC is set to 0
-Command &H88 &H04 ReadData(LC=0, Data as String)
-   Data=CardData
-End Command
+command &H88 &H08 HMAC(LC=0, data as string)
+    data = main_secret_do_hmac(data)
+end command

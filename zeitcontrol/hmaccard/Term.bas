@@ -26,19 +26,6 @@ ResetCard : Call CheckSW1SW2()
 ' A String variable to hold the response
 Public Data$
 ' Call the command and check the status
-Call HelloWorld(Data$) : Call CheckSW1SW2()
+Call Greet(Data$) : Call CheckSW1SW2()
 ' Output the result
 print Data$
-
-' Test to store some data
-' Set the value to store
-Data$="I can keep this information"
-' Call the command to write data and check the status
-Call WriteData(Data$) : Call CheckSW1SW2()
-' Just for test change value of Data$
-Data$="You will not see this"
-' Call the command to read back data and check the status
-Call ReadData(Data$) : Call CheckSW1SW2()
-' Ouput the data
-print Data$
-

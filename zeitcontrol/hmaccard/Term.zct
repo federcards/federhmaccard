@@ -7,6 +7,7 @@ COM4=Auto
 [Compiler]
 ExeFile=false
 ImageFile=false
+IncludePath=C:\Program Files (x86)\BasicCardV8\Inc;C:\Program Files (x86)\BasicCardV8\Lib
 ListingFile=false
 MapFile=false
 SourceFile=Term.bas

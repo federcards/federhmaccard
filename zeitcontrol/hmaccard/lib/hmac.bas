@@ -4,7 +4,7 @@
 ' which calculates a SHA1 based HMAC for given message.
 ' ******************************************************************************
 
-#include SHA.DEF
+
 
 
 
