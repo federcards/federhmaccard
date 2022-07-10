@@ -1,16 +1,26 @@
 sub do_factory_reset()
-    __vault_protection_key = crypto_random32bytes()
+    dim newkey as string
+    newkey = crypto_random32bytes()
+    __vault_protection_key = newkey+newkey+newkey
+    __vault_protection_key_ram = ""
 end sub
 
 
-function do_factory_init()
-    __vault_protection_key = crypto_random32bytes()
-end function
+sub "factory_init" do_factory_init()
+    dim newkey as string
+    newkey = crypto_random32bytes()
+    __vault_protection_key = newkey+newkey+newkey
+    __vault_protection_key_ram = ""
+end sub
 
 
 function authentication_factory_reset(checksum as string) as string
     if __authentication_initialized = False then
-        authentication_factory_reset = "ERR"
+        authentication_factory_reset = "ERR,get challenge first"
+        exit function
+    end if
+    if checksum <> __authentication_state.response_factory_reset then
+        authentication_factory_reset = "ERR,checksum invalid"
         exit function
     end if
     call do_factory_reset()

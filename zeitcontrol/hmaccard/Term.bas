@@ -39,7 +39,7 @@ end function
 
 
 
-
+START:
 
 
 '  Execution starts here
@@ -126,6 +126,7 @@ print "3. change vault password"
 print "4. calculate HMAC-SHA1"
 print "5. calculate HMAC-SHA256"
 print "6. close vault"
+print "7. factory reset"
 print ""
 print "Your choice?"
 
@@ -138,6 +139,7 @@ if 3 = menu_choice then goto VAULT_REENCRYPT
 if 4 = menu_choice then goto VAULT_SHA1
 if 5 = menu_choice then goto VAULT_SHA256
 if 6 = menu_choice then goto VAULT_CLOSE
+if 7 = menu_choice then goto FACTORY_RESET
 
 goto MENU
 
@@ -238,6 +240,18 @@ else
 end if
 
 input menu_choice : goto MENU
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+FACTORY_RESET:
+
+public factory_reset_value as string
+call FC_GET_CHALLENGE(auth_challenge) : Call CheckSW1SW2()
+print "Challenge nonce acquired:", str2hex(auth_challenge)
+factory_reset_value = Sha256Hash(auth_challenge)
+call FC_FACTORY_RESET(factory_reset_value) : call CheckSW1SW2()
+print(factory_reset_value)
+
+input menu_choice : goto START
 
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 DONE:

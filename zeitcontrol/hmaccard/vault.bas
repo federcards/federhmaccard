@@ -5,18 +5,24 @@ const VAULT_PLAIN_MAX_SIZE = VAULT_ENCRYPTED_MAX_SIZE - CRYPTO_OVERHEAD
 const VAULTS_COUNT = 64
 
 
-EEPROM __vault_protection_key as string
+EEPROM __vault_protection_key as string*(32*3)
 
 EEPROM __vaults_encrypted_1(1 to VAULTS_COUNT) as string*192
 EEPROM __vaults_encrypted_2(1 to VAULTS_COUNT) as string*192
 EEPROM __vaults_encrypted_3(1 to VAULTS_COUNT) as string*192
 
+PUBLIC __vault_protection_key_ram as string
 PUBLIC __vault_current_id as Byte
 PUBLIC __vault_current_secret as String
 
 
 function __vault_key_from_password(password as string) as string
-    __vault_key_from_password = HMAC_SHA256(__vault_protection_key, password)
+    if __vault_protection_key_ram = "" then
+        __vault_protection_key_ram = resume_triplestr(_
+            __vault_protection_key, 32)
+    end if
+    __vault_key_from_password = HMAC_SHA256(_
+        __vault_protection_key_ram, password)
 end function
 
 

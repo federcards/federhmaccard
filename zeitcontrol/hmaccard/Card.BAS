@@ -62,6 +62,13 @@ command &H88 &H88 FACTORY_INIT(LC=0, data as string)
 end command
 
 
+command &H88 &H86 FC_FACTORY_RESET(data as string)
+    data = authentication_factory_reset(data)
+end command
+
+
+
+
 
 command &H88 &H00 Greet(LC=0, data as string)
    'data="Federcard/HMACCARD"
