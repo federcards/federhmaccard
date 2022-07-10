@@ -70,9 +70,14 @@ print "Challenge nonce acquired:", str2hex(auth_challenge)
 
 
 public userpassword as string
-print "Input password:"
-'input userpassword
+public userpassword_new as string
+print "Input password (skip to use default 'federcard'):"
 userpassword = "federcard"
+input userpassword_new
+if userpassword_new <> "" then
+    userpassword = userpassword_new
+end if
+
 
 userpassword = ShaHash(userpassword) ' Important
 print "userpassword", str2hex(userpassword)
@@ -108,7 +113,7 @@ public menu_choice as byte
 public vault_status as string
 
 MENU:
-call FC_STATUS(data$) : call CheckSW1SW2()
+call FC_VAULT_STATUS(data$) : call CheckSW1SW2()
 vault_status = crypto_decrypt(session_key, data$)
 
 Cls
@@ -127,6 +132,7 @@ print "4. calculate HMAC-SHA1"
 print "5. calculate HMAC-SHA256"
 print "6. close vault"
 print "7. factory reset"
+print "8. change card password"
 print ""
 print "Your choice?"
 
@@ -140,6 +146,7 @@ if 4 = menu_choice then goto VAULT_SHA1
 if 5 = menu_choice then goto VAULT_SHA256
 if 6 = menu_choice then goto VAULT_CLOSE
 if 7 = menu_choice then goto FACTORY_RESET
+if 8 = menu_choice then goto CHANGE_CARD_PASSWORD
 
 goto MENU
 
@@ -250,6 +257,23 @@ print "Challenge nonce acquired:", str2hex(auth_challenge)
 factory_reset_value = Sha256Hash(auth_challenge)
 call FC_FACTORY_RESET(factory_reset_value) : call CheckSW1SW2()
 print(factory_reset_value)
+
+input menu_choice : goto START
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+CHANGE_CARD_PASSWORD:
+
+print "Changing card login password. New password?"
+input newpassword
+
+data$ = crypto_encrypt(session_key, newpassword)
+call FC_CHANGE_PASSWORD(data$) : call CheckSW1SW2()
+data$ = crypto_decrypt(session_key, data$)
+if data$ = "OK" then
+    print "Card password changed."
+else
+    print "unknown error"
+end if
 
 input menu_choice : goto START
 

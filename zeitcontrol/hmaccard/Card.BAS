@@ -89,11 +89,6 @@ command &H88 &H20 FC_VERIFY(data as string)
 end command
 
 
-
-command &H84 &H00 FC_STATUS(LC=0, data as string)
-    data = authentication_encrypt_message(vault_status())
-end command
-
 command &H84 &H24 FC_CHANGE_PASSWORD(data as string)
     data = authentication_encrypt_message(_
         authentication_set_password(_
@@ -101,6 +96,13 @@ command &H84 &H24 FC_CHANGE_PASSWORD(data as string)
 end command
 
 
+
+
+
+
+command &H84 &H00 FC_VAULT_STATUS(LC=0, data as string)
+    data = authentication_encrypt_message(vault_status())
+end command
 
 
 command &H84 &H04 FC_VAULT_OPEN(data as string)
