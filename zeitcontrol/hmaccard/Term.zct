@@ -12,10 +12,40 @@ ListingFile=false
 MapFile=false
 SourceFile=Term.bas
 
+[Console Window]
+Bottom=1030
+Left=412
+Right=1072
+ShowCmd=1
+Top=688
+
+[FreeMem Window]
+Block0=&quote;=my,fAB7L,_jjgu_+=LR*{`;J;ng1.|J&gt;a=00}.rPbME^Sh&amp;a}P`G_M
+CRC=0x0776ef12
+Hex=false
+Length=46
+Visible=false
+
 [Terminal Program]
 ComPort=100
 SaveEEPROM=false
 
+[Window Geometry]
+Block0=&quote;=my,fAB7L,_kVom]Q}uw1&amp;I3%9s4a]=1pCw&apos;[^=2:]uhNrLJMNe1BEE
+CRC=0xc9801d60
+Length=46
+
 [Window Options]
 IOToolTipEnabled=true
 ShowRegisters=Auto
+
+[Window State]
+Block0=&quote;juy(J&amp;&amp;NwRR3wW/;svz\6R`xIA&gt;P({9|a&amp;Y&lt;}3Z79]trp66tQ~cUM67:d_Fb0}JwmpS
+Block1=DQ@J&gt;fF=OZgn/zNwEbn_j=XW[V:e-|pd6pZ,rM#gq&amp;(fLRPoLY}~~4ML/n.7iNK&lt;Q)A@;v{
+Block2=l&gt;r(#\}&gt;GWa,7p7L;&quote;=$@B&apos;@]e71-*m/Z}j_v:q~|NPly4m3N=vRWdGc1qA17d`ez%-!
+Block3=.=5&quote;6PM%6;~]mE5k7%$9v^sw|Y:)bY4|?A&apos;r_=M7W`(+_&amp;W7w=;^bViOBIxhY{v,bip|PK
+Block4=%eIN\&apos;NY-_]P?Z(2yiqG[yE?rp5%yHbQmjp,|{z-)vJBp(x%c]qe&quote;MU*}rDIm,A`V5bj=]
+Block5=5H:WjI4lJ(ZV)}T2$6[j8v{y@g3}^)\T,uT7jBD&lt;oGkv($U%Qlmafi|oNmbJpnb^&gt;DF&quote;\J
+Block6=!
+CRC=0xa95c6d55
+Length=356

@@ -1,5 +1,9 @@
 declare command &H88 &H00 Greet(LC=0, data as string)
-declare command &H88 &H02 CardUnlock(LC=0, data as string)
+
+declare command &H88 &H84 FC_GET_CHALLENGE(LC=0, data as string)
+declare command &H88 &H20 FC_VERIFY(data as string)
+
+
 declare command &H88 &H04 CardImport(LC=0, data as string)
 declare command &H88 &H06 CardSetPassword(LC=0, data as string)
 declare command &H88 &H08 HMAC(LC=0, data as string)

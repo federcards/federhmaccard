@@ -8,7 +8,9 @@ PUBLIC __strcmp_64_a AS STRING*65
 PUBLIC __strcmp_64_b AS STRING*65
 
 
-FUNCTION strcmp_253(a as STRING, b as STRING) as BYTE
+
+
+FUNCTION strcmp_253(a as STRING, b as STRING) as Integer
     __strcmp_253_a = a + "!"
     __strcmp_253_b = b + "!"
 
@@ -26,7 +28,25 @@ FUNCTION strcmp_253(a as STRING, b as STRING) as BYTE
 END FUNCTION
 
 
-FUNCTION strcmp_64(a as STRING, b as STRING) as BYTE
+FUNCTION strcmp_n(a as STRING, b as STRING, n as BYTE) as Integer
+    __strcmp_253_a = a + "!"
+    __strcmp_253_b = b + "!"
+
+    PRIVATE m as BYTE = 0
+    PRIVATE i as BYTE
+    FOR i = 1 TO n + 1
+        m = m OR (Asc(__strcmp_253_a(i)) XOR Asc(__strcmp_253_b(i)))
+    NEXT
+    
+    strcmp_n = (0 = m)
+    
+    __strcmp_253_a = __zero_254
+    __strcmp_253_b = __zero_254
+
+END FUNCTION
+
+
+FUNCTION strcmp_64(a as STRING, b as STRING) as Integer
     __strcmp_64_a = a + "!"
     __strcmp_64_b = b + "!"
 

@@ -42,19 +42,29 @@ Option Explicit
 #include lib/hashcash_guardian.bas
 
 #include main_secret.bas
-
+#include authentication.bas
 
 #include Card.def
 
 
 
 command &H88 &H00 Greet(LC=0, data as string)
-   data="Federcard/HMACCARD"
+   'data="Federcard/HMACCARD"
+   data = HMAC_SHA256("key", "The quick brown fox jumps over the lazy dog")
 end command
 
-command &H88 &H02 CardUnlock(LC=0, data as string)
-    data = main_secret_unlock(data)
+
+command &H88 &H84 FC_GET_CHALLENGE(LC=0, data as string)
+    data = authentication_get_challenge()
 end command
+
+command &H88 &H20 FC_VERIFY(data as string)
+    dim verification_data as string*20
+    verification_data = Left$(data, 20)
+    data = authentication_verify(verification_data)
+end command
+
+
 
 command &H88 &H04 CardImport(LC=0, data as string)
     data = main_secret_import(data)
