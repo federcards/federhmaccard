@@ -27,7 +27,7 @@ Length=46
 Visible=false
 
 [Terminal Program]
-ComPort=100
+ComPort=201
 SaveEEPROM=false
 
 [Window Geometry]

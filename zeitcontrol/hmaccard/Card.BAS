@@ -31,9 +31,11 @@
 
 Option Explicit
 
+#Pragma CodeBlock "factory_init"
 
 #include AES.DEF
 #include SHA.DEF
+#include Card.def
 
 #include util.bas
 
@@ -41,10 +43,23 @@ Option Explicit
 #include lib/crypto.bas
 #include lib/hashcash_guardian.bas
 
-#include main_secret.bas
+#include vault.bas
 #include authentication.bas
+#include factory.bas
 
-#include Card.def
+
+
+
+EEPROM factory_init_done as Byte = 0
+command &H88 &H88 FACTORY_INIT(LC=0, data as string)
+    if 0 = factory_init_done then
+        call do_factory_init()
+        factory_init_done = &HAA
+        erase "factory_init"
+        data = "OK,initialized"
+    end if
+    data = "OK,nothing to do"
+end command
 
 
 
@@ -80,14 +95,53 @@ command &H84 &H24 FC_CHANGE_PASSWORD(data as string)
 end command
 
 
-command &H88 &H04 CardImport(LC=0, data as string)
-    data = main_secret_import(data)
+
+
+command &H84 &H04 FC_VAULT_OPEN(data as string)
+    data = authentication_decrypt_message(data)
+    if data = "" then
+        exit command
+    end if
+    data = vault_open(asc(data(1)), Mid$(data, 2))
+    data = authentication_encrypt_message(data)
 end command
 
-command &H88 &H06 CardSetPassword(LC=0, data as string)
-    data = main_secret_set_password(data)
+
+command &H84 &H08 FC_VAULT_IMPORT(data as string)
+    data = authentication_decrypt_message(data)
+    if data = "" then
+        exit command
+    end if
+    data = vault_import(asc(data(1)), Mid$(data, 2))
+    data = authentication_encrypt_message(data)
 end command
 
-command &H88 &H08 HMAC(LC=0, data as string)
-    data = main_secret_do_hmac(data)
+
+command &H84 &H10 FC_VAULT_REENCRYPT(data as string)
+    data = authentication_decrypt_message(data)
+    if data = "" then
+        exit command
+    end if
+    data = vault_import(asc(data(1)), Mid$(data, 2))
+    data = authentication_encrypt_message(data)
+end command
+
+
+command &H84 &H12 FC_VAULT_HMAC_SHA1(data as string)
+    data = authentication_decrypt_message(data)
+    if data = "" then
+        exit command
+    end if
+    data = vault_hmac_sha1(data)
+    data = authentication_encrypt_message(data)
+end command
+
+
+command &H84 &H14 FC_VAULT_HMAC_SHA256(data as string)
+    data = authentication_decrypt_message(data)
+    if data = "" then
+        exit command
+    end if
+    data = vault_hmac_sha256(data)
+    data = authentication_encrypt_message(data)
 end command

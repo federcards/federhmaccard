@@ -17,6 +17,7 @@
 '  2. from NONCE, the card generates:   // denoting HMAC=HMAC(secret, input)
 '      SK = HMAC(AP, NONCE) // AP=SHA1(password) is previously stored in E2PROM
 '      SRES_1 = HMAC(AP, SK)
+'      SRES_FACTORY_RESET = SHA256(NONCE)
 '      RET_OK = HMAC(SK, NONCE)
 '  3. the user calls GET_CHALLENGE and gets NONCE. The user calculates its SK,
 '     SRES_2 and RET_OK in the same way of above step accordingly.
@@ -46,6 +47,7 @@ type authentication_session_state
     nonce as string*AUTHENTICATION_TOKEN_SIZE
     session_key as string*AUTHENTICATION_TOKEN_SIZE
     response as string*AUTHENTICATION_TOKEN_SIZE
+    response_factory_reset as string*AUTHENTICATION_TOKEN_SIZE
     ret_ok as string*AUTHENTICATION_TOKEN_SIZE
 end type
 
@@ -86,6 +88,7 @@ sub authentication_reset_state()
     authentication_password = authentication_get_password()
     
     __authentication_state.nonce = crypto_random_bytes(AUTHENTICATION_TOKEN_SIZE)
+    __authentication_state.response_factory_reset = Sha256Hash(__authentication_state.nonce)
     
     __authentication_state.session_key = HMAC_SHA256(authentication_password, __authentication_state.nonce)
 
@@ -135,3 +138,7 @@ function authentication_decrypt_message(message as string) as string
     authentication_decrypt_message = crypto_decrypt(_
         __authentication_state.session_key, message)
 end function
+
+
+'function authentication_factory_reset(checksum as string) as string
+' ... -> see factory.bas

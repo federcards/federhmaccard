@@ -52,6 +52,9 @@ ResetCard : Call CheckSW1SW2()
 ' Test Hello World command
 ' A String variable to hold the response
 Public Data$
+
+Call FACTORY_INIT(Data$) : Call CheckSW1SW2()
+print(Data$)
 ' Call the command and check the status
 Call Greet(Data$) : Call CheckSW1SW2()
 ' Output the result
@@ -96,23 +99,57 @@ end if
 
 print "Auth passed. Session key ok."
 
-print "Echo test"
+'print "Echo test"
 
-print "input test string"
-input data$
-data$ = crypto_encrypt(session_key, data$)
-call FC_ECHOTEST(data$) : call CheckSW1SW2()
-print "we get", crypto_decrypt(session_key, data$)
-
-
+'print "input test string"
+'input data$
+'data$ = crypto_encrypt(session_key, data$)
+'call FC_ECHOTEST(data$) : call CheckSW1SW2()
+'print "we get", crypto_decrypt(session_key, data$)
 
 
 
 
+print "Try open vault #2"
+data$ = crypto_encrypt(session_key, chr$(2) + "password")
+call FC_VAULT_OPEN(data$) : call CheckSW1SW2()
+data$ = crypto_decrypt(session_key, data$)
+print(data$)
+
+dim vault_opened as integer
 
 
+if left$(data$, 3) = "ERR" then
+    print("Import vault #2 with a secret")
+    data$ = crypto_encrypt(session_key, chr$(2) + "secret")
+    call FC_VAULT_IMPORT(data$) : call CheckSW1SW2()
+    data$ = crypto_decrypt(session_key, data$)
+    print(data$)
+    
+    vault_opened = ("OK" = Left$(data$, 2))
+else 
+    vault_opened = True
+end if
 
 
+if not vault_opened then
+    print "failed to open vault using given password."
+    goto DONE
+end if
+
+print("Test SHA1")
+
+data$ = crypto_encrypt(session_key, "test")
+call FC_VAULT_HMAC_SHA1(data$) : call CheckSW1SW2()
+data$ = crypto_decrypt(session_key, data$)
+print str2hex(Mid$(data$, 4))
+
+print("Test SHA256")
+
+data$ = crypto_encrypt(session_key, "test")
+call FC_VAULT_HMAC_SHA256(data$) : call CheckSW1SW2()
+data$ = crypto_decrypt(session_key, data$)
+print str2hex(Mid$(data$, 4))
 
 
 
