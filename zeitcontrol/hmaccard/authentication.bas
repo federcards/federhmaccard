@@ -26,11 +26,15 @@
 '  5. the user verifies RET_OK to authenticate the card.
 
 
+const AUTHENTICATION_TOKEN_SIZE = 32
+const AUTHENTICATION_SECRET_SIZE = 20
+
+
 ' Default password: "federcard"
 const __authentication_default_password=Chr$(_
     236, 94, 211, 160, 224, 68, 16, 153, 105, 45, 152, 44, 138, 239, 157, 213, 183, 187, 241, 153)
     
-EEPROM __authentication_password as string*60=_
+EEPROM __authentication_password as string*(3*AUTHENTICATION_SECRET_SIZE)=_
     __authentication_default_password + _
     __authentication_default_password + _
     __authentication_default_password
@@ -39,10 +43,10 @@ public __authentication_initialized as Integer
 public __authentication_verified as Integer
 
 type authentication_session_state
-    nonce as string*20
-    session_key as string*20
-    response as string*20
-    ret_ok as string*20
+    nonce as string*AUTHENTICATION_TOKEN_SIZE
+    session_key as string*AUTHENTICATION_TOKEN_SIZE
+    response as string*AUTHENTICATION_TOKEN_SIZE
+    ret_ok as string*AUTHENTICATION_TOKEN_SIZE
 end type
 
 public __authentication_state as authentication_session_state
@@ -63,15 +67,15 @@ function authentication_set_password(plain_password as string) as string
         exit function
     end if
 
-    dim hashed_password as string*20
+    dim hashed_password as string*AUTHENTICATION_SECRET_SIZE
     hashed_password = ShaHash(plain_password)
     __authentication_password = hashed_password+hashed_password+hashed_password
     
     authentication_set_password = "OK"
 end function
 
-function authentication_get_password() as string*20
-    authentication_get_password = resume_triplestr(__authentication_password, 20)
+function authentication_get_password() as string*AUTHENTICATION_SECRET_SIZE
+    authentication_get_password = resume_triplestr(__authentication_password, AUTHENTICATION_SECRET_SIZE)
 end function
 
 
@@ -81,33 +85,29 @@ sub authentication_reset_state()
     dim authentication_password as string
     authentication_password = authentication_get_password()
     
-    dim nonce as string*20
-    nonce = crypto_random_bytes(20)
-    __authentication_state.nonce = nonce
+    __authentication_state.nonce = crypto_random_bytes(AUTHENTICATION_TOKEN_SIZE)
     
-    dim sk as string*20
-    sk = HMAC_SHA1(authentication_password, __authentication_state.nonce)
-    __authentication_state.session_key = sk
+    __authentication_state.session_key = HMAC_SHA256(authentication_password, __authentication_state.nonce)
 
-    dim response as string*20
-    response = HMAC_SHA1(authentication_password, sk)
-    __authentication_state.response = response
+    'dim response as string*AUTHENTICATION_TOKEN_SIZE
+    'response = HMAC_SHA256(authentication_password, sk)
+    __authentication_state.response = HMAC_SHA256(authentication_password, __authentication_state.session_key)
     
-    __authentication_state.ret_ok = HMAC_SHA1(sk, nonce)
+    __authentication_state.ret_ok = HMAC_SHA256(__authentication_state.session_key, __authentication_state.nonce)
         
     __authentication_initialized = True
 end sub
 
 
 
-function authentication_get_challenge() as string*20
+function authentication_get_challenge() as string*AUTHENTICATION_TOKEN_SIZE
     call authentication_reset_state()
     authentication_get_challenge = __authentication_state.nonce
 end function
 
 
-function authentication_verify(byval answer as string*20) as string
-    if strcmp_n(answer, __authentication_state.response, 20) = True then
+function authentication_verify(byval answer as string*AUTHENTICATION_TOKEN_SIZE) as string
+    if strcmp_n(answer, __authentication_state.response, AUTHENTICATION_TOKEN_SIZE) = True then
         __authentication_verified = True
         authentication_verify = __authentication_state.ret_ok
     else
@@ -117,4 +117,21 @@ function authentication_verify(byval answer as string*20) as string
 end function
 
 
+function authentication_encrypt_message(message as string) as string
+    if authentication_verified() = False then
+        authentication_encrypt_message = ""
+        exit function
+    end if
+    authentication_encrypt_message = crypto_encrypt(_
+        __authentication_state.session_key, message)
+end function
 
+
+function authentication_decrypt_message(message as string) as string
+    if authentication_verified() = False then
+        authentication_decrypt_message = ""
+        exit function
+    end if
+    authentication_decrypt_message = crypto_decrypt(_
+        __authentication_state.session_key, message)
+end function

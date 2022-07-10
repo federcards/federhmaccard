@@ -58,12 +58,26 @@ command &H88 &H84 FC_GET_CHALLENGE(LC=0, data as string)
     data = authentication_get_challenge()
 end command
 
+
+
 command &H88 &H20 FC_VERIFY(data as string)
-    dim verification_data as string*20
-    verification_data = Left$(data, 20)
+    dim verification_data as string*32
+    verification_data = Left$(data, 32)
     data = authentication_verify(verification_data)
 end command
 
+
+
+command &H84 &H00 FC_ECHOTEST(data as string)
+    data = authentication_encrypt_message(_
+        "echoed:" + authentication_decrypt_message(data))
+end command
+
+command &H84 &H24 FC_CHANGE_PASSWORD(data as string)
+    data = authentication_encrypt_message(_
+        authentication_set_password(_
+            authentication_decrypt_message(data)))
+end command
 
 
 command &H88 &H04 CardImport(LC=0, data as string)

@@ -3,6 +3,9 @@ declare command &H88 &H00 Greet(LC=0, data as string)
 declare command &H88 &H84 FC_GET_CHALLENGE(LC=0, data as string)
 declare command &H88 &H20 FC_VERIFY(data as string)
 
+declare command &H84 &H00 FC_ECHOTEST(data as string)
+declare command &H84 &H24 FC_CHANGE_PASSWORD(data as string)
+
 
 declare command &H88 &H04 CardImport(LC=0, data as string)
 declare command &H88 &H06 CardSetPassword(LC=0, data as string)

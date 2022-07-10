@@ -74,11 +74,11 @@ print "userpassword", str2hex(userpassword)
 
 
 public session_key as string 
-session_key = HMAC_SHA1(userpassword, auth_challenge)
+session_key = HMAC_SHA256(userpassword, auth_challenge)
 public response as string 
-response = HMAC_SHA1(userpassword, session_key)
+response = HMAC_SHA256(userpassword, session_key)
 public ret_ok as string
-ret_ok = HMAC_SHA1(session_key, auth_challenge)
+ret_ok = HMAC_SHA256(session_key, auth_challenge)
 
 print "response", str2hex(response)
 Data$ = response
@@ -95,6 +95,14 @@ end if
 
 
 print "Auth passed. Session key ok."
+
+print "Echo test"
+
+print "input test string"
+input data$
+data$ = crypto_encrypt(session_key, data$)
+call FC_ECHOTEST(data$) : call CheckSW1SW2()
+print "we get", crypto_decrypt(session_key, data$)
 
 
 
