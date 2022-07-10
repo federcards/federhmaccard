@@ -55,6 +55,8 @@ Public Data$
 
 Call FACTORY_INIT(Data$) : Call CheckSW1SW2()
 print(Data$)
+
+
 ' Call the command and check the status
 Call Greet(Data$) : Call CheckSW1SW2()
 ' Output the result
@@ -99,60 +101,144 @@ end if
 
 print "Auth passed. Session key ok."
 
-'print "Echo test"
-
-'print "input test string"
-'input data$
-'data$ = crypto_encrypt(session_key, data$)
-'call FC_ECHOTEST(data$) : call CheckSW1SW2()
-'print "we get", crypto_decrypt(session_key, data$)
 
 
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+public menu_choice as byte
+public vault_status as string
+
+MENU:
+call FC_STATUS(data$) : call CheckSW1SW2()
+vault_status = crypto_decrypt(session_key, data$)
+
+Cls
+print "Menu of commands"
+print "================"
+if asc(vault_status(4)) = 0 then
+    print "Currently no vault open."
+else
+    print "Current vault=", asc(vault_status(4))
+end if
+
+print "1. open vault"
+print "2. import vault"
+print "3. change vault password"
+print "4. calculate HMAC-SHA1"
+print "5. calculate HMAC-SHA256"
+print "6. close vault"
+print ""
+print "Your choice?"
 
 
-print "Try open vault #2"
-data$ = crypto_encrypt(session_key, chr$(2) + "password")
+input menu_choice
+
+if 1 = menu_choice then goto VAULT_OPEN
+if 2 = menu_choice then goto VAULT_IMPORT
+if 3 = menu_choice then goto VAULT_REENCRYPT
+if 4 = menu_choice then goto VAULT_SHA1
+if 5 = menu_choice then goto VAULT_SHA256
+if 6 = menu_choice then goto VAULT_CLOSE
+
+goto MENU
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+VAULT_OPEN:
+
+dim vault_id as byte
+dim vault_password as string
+dim vault_opened as integer
+
+print "Vault id:"
+input vault_id
+print "Vault password:"
+input vault_password
+print "Try open vault id=",vault_id
+data$ = crypto_encrypt(session_key, chr$(vault_id) + vault_password)
 call FC_VAULT_OPEN(data$) : call CheckSW1SW2()
 data$ = crypto_decrypt(session_key, data$)
 print(data$)
 
-dim vault_opened as integer
+vault_opened = ("OK" = Left$(data$, 2))
 
+input menu_choice : goto MENU
 
-if left$(data$, 3) = "ERR" then
-    print("Import vault #2 with a secret")
-    data$ = crypto_encrypt(session_key, chr$(2) + "secret")
-    call FC_VAULT_IMPORT(data$) : call CheckSW1SW2()
-    data$ = crypto_decrypt(session_key, data$)
-    print(data$)
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+VAULT_IMPORT:
+
+dim vault_secret as string
+print "Vault id:"
+input vault_id
+print "Vault secret in plaintext:"
+input vault_secret
+
+print "Import to vault id=", vault_id
+data$ = crypto_encrypt(session_key, chr$(vault_id) + vault_secret)
+call FC_VAULT_IMPORT(data$) : call CheckSW1SW2()
+data$ = crypto_decrypt(session_key, data$)
+print(data$)
     
-    vault_opened = ("OK" = Left$(data$, 2))
-else 
-    vault_opened = True
-end if
+input menu_choice : goto MENU
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+VAULT_REENCRYPT:
 
 
-if not vault_opened then
-    print "failed to open vault using given password."
-    goto DONE
-end if
+print "Changing password for current vault. Your new password?"
+dim newpassword as string
+input newpassword
 
-print("Test SHA1")
+data$ = crypto_encrypt(session_key, newpassword)
+call FC_VAULT_REENCRYPT(data$) : call CheckSW1SW2()
+data$ = crypto_decrypt(session_key, data$)
+print(data$)
 
-data$ = crypto_encrypt(session_key, "test")
+input menu_choice : goto MENU
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+VAULT_SHA1:
+
+print("Calculating HMAC-SHA1 for current vault. Your argument?")
+input data$
+data$ = crypto_encrypt(session_key, data$)
 call FC_VAULT_HMAC_SHA1(data$) : call CheckSW1SW2()
 data$ = crypto_decrypt(session_key, data$)
-print str2hex(Mid$(data$, 4))
+if Left$(data$, 3) = "OK," then
+    print "success:", str2hex(Mid$(data$, 4))
+else
+    print data$
+end if
 
-print("Test SHA256")
+input menu_choice : goto MENU
 
-data$ = crypto_encrypt(session_key, "test")
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+VAULT_SHA256:
+
+print("Calculating HMAC-SHA256 for current vault. Your argument?")
+input data$
+data$ = crypto_encrypt(session_key, data$)
 call FC_VAULT_HMAC_SHA256(data$) : call CheckSW1SW2()
 data$ = crypto_decrypt(session_key, data$)
-print str2hex(Mid$(data$, 4))
+if Left$(data$, 3) = "OK," then
+    print "success:", str2hex(Mid$(data$, 4))
+else
+    print data$
+end if
 
+input menu_choice : goto MENU
 
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+VAULT_CLOSE:
 
+call FC_VAULT_CLOSE(data$) : call CheckSW1SW2()
+data$ = crypto_decrypt(session_key, data$)
+if data$ = "OK" then
+    print "Vault closed."
+else
+    print "unknown error"
+end if
 
+input menu_choice : goto MENU
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 DONE:
-print "Done"
+print "Bye."

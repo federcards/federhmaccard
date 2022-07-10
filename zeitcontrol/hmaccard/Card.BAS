@@ -83,9 +83,8 @@ end command
 
 
 
-command &H84 &H00 FC_ECHOTEST(data as string)
-    data = authentication_encrypt_message(_
-        "echoed:" + authentication_decrypt_message(data))
+command &H84 &H00 FC_STATUS(LC=0, data as string)
+    data = authentication_encrypt_message(vault_status())
 end command
 
 command &H84 &H24 FC_CHANGE_PASSWORD(data as string)
@@ -122,7 +121,7 @@ command &H84 &H10 FC_VAULT_REENCRYPT(data as string)
     if data = "" then
         exit command
     end if
-    data = vault_import(asc(data(1)), Mid$(data, 2))
+    data = vault_reencrypt(data)
     data = authentication_encrypt_message(data)
 end command
 
@@ -144,4 +143,10 @@ command &H84 &H14 FC_VAULT_HMAC_SHA256(data as string)
     end if
     data = vault_hmac_sha256(data)
     data = authentication_encrypt_message(data)
+end command
+
+
+command &H84 &H16 FC_VAULT_CLOSE(LC=0, data as string)
+    call vault_close()
+    data = authentication_encrypt_message("OK")
 end command

@@ -8,7 +8,7 @@ declare command &H88 &H00 Greet(LC=0, data as string)
 declare command &H88 &H84 FC_GET_CHALLENGE(LC=0, data as string)
 declare command &H88 &H20 FC_VERIFY(data as string)
 
-declare command &H84 &H00 FC_ECHOTEST(data as string)
+declare command &H84 &H00 FC_STATUS(LC=0, data as string)
 declare command &H84 &H24 FC_CHANGE_PASSWORD(data as string)
 
 
@@ -17,7 +17,7 @@ declare command &H84 &H08 FC_VAULT_IMPORT(data as string)
 declare command &H84 &H10 FC_VAULT_REENCRYPT(data as string)
 declare command &H84 &H12 FC_VAULT_HMAC_SHA1(data as string)
 declare command &H84 &H14 FC_VAULT_HMAC_SHA256(data as string)
-
+declare command &H84 &H16 FC_VAULT_CLOSE(LC=0, data as string)
 
 
 declare sub do_factory_reset()

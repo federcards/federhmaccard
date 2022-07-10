@@ -20,16 +20,18 @@ Length=46
 Visible=false
 
 [EEPROM]
-Block0=B^T[r&apos;=0_&gt;NVlf!=2b%zg&amp;fN_-ye`kLXyt1)Q94&gt;b%WFSfMkf7ly57:Wzgb)~~6&apos;={qK!aP
-Block1=&apos;DH.~(iQ]T_6h#^:G98D:O&gt;cRWo,]zN&quote;e=W=S$A@!%,X&amp;%^k1&lt;r_{w{6&amp;pG&quote;5VGn&quote;b[b:fD
-Block2=CyahG?1UhG?/%==)WH93LlSs@sdN!b@$^GX~uF9s/ltV)#AG2l3];GCeQ~M^}+FNzz2_btc
-Block3=$ym&gt;ZX&amp;&amp;(n.{v*|%k&lt;yUR)&apos;|q=H$5}`WiVuY&quote;h,H^DD=n[=~v3tcA$C3q0
-Block4=*&quote;$&apos;zoGCKSL|jpft%1wk]w&gt;`^%OX&amp;3Oq%D6hKyy/=ghMgN7CmzM&amp;8jD?Hb5Yp\f&amp;8ZL5OyF
-Block5=6Y,%ByttgZ%&gt;Ig8!^^oV(w10X-Y{B%_LU2%}]%k1_{;)L;V5-ikA:hI%Du_(
-CRC=0x253a9a4c
-Length=339
-MaskCRC=1754698069
-StartCRC=2920850681
+Block0=B^RO6Byg2DV!Fh~,JMO&quote;x/kDBK|ehk3fRwje(5]Q3&lt;V4]#&quote;3&quote;OZn.xrWx&quote;_U&lt;NoixN:/PdX
+Block1=.uP(*r(KtAD-:=,B)Bt+_mtoNa1i4&lt;?==55B(F+CI*Z=N@&amp;\Pl7sSyp9l2f]b`%f&amp;-]1O4_
+Block2=DNipxz|HS.sJqX339NoC;HW!xlnIbDy9:9DtUyk|&apos;r_\+&amp;L@O&lt;w;Xce6&amp;lF9MOF|_gXyvW8
+Block3=@bO+:RIX\)|o0&gt;aK(&amp;H.b#Wv?L)R4@,4o}l&gt;dHm_IT@icO|u8+o^RZWD7zJC7Y(]&lt;mn/5@,
+Block4=2t+s$z;C+0RV^2!&apos;k3|pcBy`w&gt;bZvq_DE|P\WnTKb3&lt;*dI&gt;TGE^N%l5(F@xiO`GoP8]!KbV
+Block5=?U^t6,Nd0R&amp;(f&lt;~yp5zTUjtV&apos;?9mx&quote;&amp;O+$bAGr,;)G_ioi0*}zG_rSouq4cv!fm^3N+]259
+Block6=.K?|Egr?IuxRX-s[&quote;7+eE\4x76r/oU7h}~W]upd\7cSS,D&gt;,n=MgJ6~JeOn/H9L+^-(~(eK
+Block7=/VEe&amp;_zoSGud8+%rycSS0LJQ#MS&apos;v&lt;`]5nX*xWk
+CRC=0x94fb7568
+Length=438
+MaskCRC=258165505
+StartCRC=3918198156
 
 [Files Window]
 Block0=&quote;=my,fAB7L,_jjgu_+=LR*|&quote;L9:PS4]U6Og+$)Bp2G97rgrVDtb#jo:C
@@ -55,12 +57,12 @@ IOToolTipEnabled=true
 ShowRegisters=Auto
 
 [Window State]
-Block0=&quote;juy(J&amp;&amp;NwRR3wW/;svz\RY%LtGbM%w:]&lt;R*^yU&amp;byqV~~EqC+n1sy-;TK#dP&quote;I%ug[a
+Block0=&quote;juy(J&amp;&amp;NwRR3wW/;svz\RY%LtD*AF[VuhrrdixP69HTV}2+Z&lt;.7ho7i;)FkVD\D}Dr+
 Block1=DQ@J&gt;fF=OZgn/zNwEbn_j=XW[V:e-|pd6pZ,rM#gq&amp;(fLRPoLY}~~4ML/n.7iNK&lt;Q)A@;v{
 Block2=l&gt;r(#\}&gt;GWa,7p7L;&quote;=$@B&apos;@]e71-*m/Z}j_v:q~|NPly4m3N=vRWdGc1qA17d`ez%-!
 Block3=.=5&quote;6PM%6;~]mE5k7%$9v^sw|Y:)bY4|?A&apos;r_=M7W`(+_&amp;W7w=;^bViOBLMSa&lt;9{Nr#}d7
 Block4=%eIN\&apos;NY-_]P?Z(2yiqG[yE?rp5%yHbQmjp,|{z-)vJBp(x%c]qe&quote;MU*}rDIm,A`V6EN2_
-Block5=?h,#rv#]FLs`;!I,mV)Bg#Pr_wENSK)o&lt;L!(n1*F`jr&amp;JxN&apos;!VYhKv|YR{%K5]&apos;eZf^qZ*
+Block5=Dfz$@`2}AtW0;^ky^FV!$yC]|^Yf*Gr`RY|-Gq}?[.j\ZmzFuRP.hR9Gq&lt;~X/&lt;!PVz#$w`
 Block6=!
-CRC=0x7a03805b
+CRC=0xacaabaf0
 Length=356

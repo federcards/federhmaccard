@@ -111,5 +111,12 @@ function vault_hmac_sha256(byval hmacval as string) as string
 end function
 
 
+sub vault_close()
+    __vault_current_id = 0
+    __vault_current_secret = ""
+end sub
 
 
+function vault_status() as string
+    vault_status = "OK," + chr$(__vault_current_id)
+end function
