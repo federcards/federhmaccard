@@ -7,8 +7,9 @@ import hashlib
 from .crypto import crypto_encrypt, crypto_decrypt
 
 
-from .commands.FC_GET_CHALLENGE import FC_GET_CHALLENGE
-from .commands.FC_VERIFY import FC_VERIFY
+from .commands.FC_GET_CHALLENGE     import FC_GET_CHALLENGE
+from .commands.FC_VERIFY            import FC_VERIFY
+from .commands.FC_VAULT_OPEN        import FC_VAULT_OPEN
 
 
 
@@ -67,6 +68,12 @@ class CardSession:
 
         self.__session_key = session_key if verified else None
         return verified
+
+
+    def open_vault(self, vault_id, password):
+        args = (self.cardService.connection, self.__session_key)
+        return FC_VAULT_OPEN(vault_id, password)(*args)
+
 
 
     def __enter__(self, *args, **kvargs):

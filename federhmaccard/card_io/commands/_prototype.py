@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from ..error import CardIOError
+from ..crypto import crypto_encrypt, crypto_decrypt
 
 class CardCommand:
 
@@ -15,10 +16,10 @@ class CardCommand:
         raise NotImplementedError("Must override this.")
 
     def __call__(self, connection):
-        sw1, sw2, response = self.__send_data(connection, self.build_request())
+        sw1, sw2, response = self._send_data(connection, self.build_request())
         return self.parse_response(sw1, sw2, response)
 
-    def __send_data(self, connection, data=b""):
+    def _send_data(self, connection, data=b""):
         assert type(data) == bytes
         data = list(data)
         # See ISO7816-3. APDU begins with CLA, INS, P1, P2 and ends with
@@ -42,3 +43,20 @@ class CardCommand:
                 response = bytes(response)
             raise CardIOError(sw1=sw1, sw2=sw2, data=response)
         return sw1, sw2, response
+
+
+class EncryptedCardCommand(CardCommand):
+
+    def __init__(self, CLA, INS):
+        CardCommand.__init__(self, CLA, INS)
+
+    def __call__(self, connection, session_key):
+        sw1, sw2, response = self._send_data(
+            connection,
+            crypto_encrypt(session_key, self.build_request())
+        )
+        return self.parse_response(
+            sw1,
+            sw2,
+            crypto_decrypt(session_key, response)
+        )
