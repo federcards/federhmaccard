@@ -11,13 +11,15 @@ from .commands.FC_VAULT_CLOSE       import *
 
 class VaultAccess:
 
-    def __init__(self, card_session, vault_id, password):
+    def __init__(self, card_session, vault_id):
         self.session = card_session
         self.vault_id = vault_id
-        self.open_command = FC_VAULT_OPEN(vault_id, password)
 
     def __enter__(self, *args, **kvargs):
-        print(self.session.run_command(self.open_command))
+        return self
 
     def __exit__(self, *args, **kvargs):
         print(self.session.run_command(FC_VAULT_CLOSE()))
+
+    def open(self, password):
+        print(self.session.run_command(FC_VAULT_OPEN(self.vault_id, password)))

@@ -14,5 +14,6 @@ with CardSession() as session:
 
     print("Login success! Welcome to use FEDERCARD/HMACCard.")
 
-    with session.vault(1, getpass("Password for vault #1").encode("ascii")) as vault:
-        pass
+    with session.vault(1) as vault:
+        pwd = getpass("Password for vault #1").encode("ascii")
+        vault.open(pwd)

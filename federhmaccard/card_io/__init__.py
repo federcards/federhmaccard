@@ -79,8 +79,8 @@ class CardSession:
         else:
             return cmd(self.cardService.connection)
 
-    def vault(self, i, password):
-        return VaultAccess(self, i, password)
+    def vault(self, i):
+        return VaultAccess(self, i)
 
     def __enter__(self, *args, **kvargs):
         self.cardService = self.cardRequest.waitforcard()
