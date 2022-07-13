@@ -21,5 +21,14 @@ class VaultAccess:
     def __exit__(self, *args, **kvargs):
         print(self.session.run_command(FC_VAULT_CLOSE()))
 
+    @property
+    def status(self):
+        ret = { 'success': False, 'open': False, 'vault': None }
+        st = self.session.run_command(FC_VAULT_STATUS())
+        ret['success'] = (st[:3] == b'OK,')
+        ret['open'] = st[-1] != 0
+        ret['vault'] = None if not ret['open'] else st[-1]
+        return ret
+
     def open(self, password):
         print(self.session.run_command(FC_VAULT_OPEN(self.vault_id, password)))
