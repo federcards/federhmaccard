@@ -31,4 +31,17 @@ class VaultAccess:
         return ret
 
     def open(self, password):
-        print(self.session.run_command(FC_VAULT_OPEN(self.vault_id, password)))
+        ret = self.session.run_command(FC_VAULT_OPEN(self.vault_id, password))
+        print(ret)
+        return ret.startswith(b'OK')
+
+    def import_secret(self, secret):
+        print(self.session.run_command(FC_VAULT_IMPORT(self.vault_id, secret)))
+
+    def HMAC_SHA1(self, message):
+        ret = self.session.run_command(FC_VAULT_HMAC_SHA1(message))
+        if ret.startswith(b'OK,'):
+            return ret[3:]
+        else:
+            print(ret)
+            return None

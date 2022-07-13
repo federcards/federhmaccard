@@ -16,5 +16,12 @@ with CardSession() as session:
 
     with session.vault(1) as vault:
         print(vault.status)
+
         pwd = getpass("Password for vault #1").encode("ascii")
-        vault.open(pwd)
+        
+        if vault.open(pwd):
+            print(vault.HMAC_SHA1(b'test').hex())
+
+        else:
+            print("Import secret.")
+            vault.import_secret(getpass("Secret to be imported?").encode("ascii"))

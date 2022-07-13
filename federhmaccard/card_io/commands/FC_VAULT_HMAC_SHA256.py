@@ -2,10 +2,10 @@ from ._prototype import EncryptedCardCommand
 
 class FC_VAULT_HMAC_SHA256(EncryptedCardCommand):
 
-    def __init__(self, vault_id, message):
+    def __init__(self, message):
         assert type(message) == bytes
         EncryptedCardCommand.__init__(self, 0x84, 0x14)
-        self.__data = bytes([vault_id]) + message 
+        self.__data = message 
 
     def build_request(self):
         return self.__data 
