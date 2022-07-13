@@ -10,13 +10,6 @@ from .crypto import crypto_encrypt, crypto_decrypt
 from .commands._prototype import *
 from .commands.FC_GET_CHALLENGE     import * 
 from .commands.FC_VERIFY            import * 
-from .commands.FC_VAULT_OPEN        import *
-from .commands.FC_VAULT_STATUS      import *
-from .commands.FC_VAULT_IMPORT      import *
-from .commands.FC_VAULT_REENCRYPT   import *
-from .commands.FC_VAULT_HMAC_SHA1   import *
-from .commands.FC_VAULT_HMAC_SHA256 import *
-from .commands.FC_VAULT_CLOSE       import *
 
 
 
@@ -45,6 +38,7 @@ declare command &H84 &H16 FC_VAULT_CLOSE(LC=0, data as string)
 from .error import CardIOError
 import hmac
 import hashlib
+from .vault import VaultAccess
 
 
 def HMAC_SHA256(key, data):
@@ -64,7 +58,7 @@ class CardSession:
         conn = self.cardService.connection
         password = hashlib.sha1(password).digest()
         
-        auth_challenge = self.__run_command(FC_GET_CHALLENGE())
+        auth_challenge = self.run_command(FC_GET_CHALLENGE())
 
         session_key = HMAC_SHA256(password, auth_challenge)
         s_res = HMAC_SHA256(password, session_key)
@@ -72,23 +66,21 @@ class CardSession:
 
         self.__session_key = session_key
 
-        verify_result = self.__run_command(FC_VERIFY(s_res))
+        verify_result = self.run_command(FC_VERIFY(s_res))
         verified = (verify_result == ret_ok)
 
         if not verified:
             self.__session_key = None
         return verified
 
-    def __run_command(self, cmd):
+    def run_command(self, cmd):
         if isinstance(cmd, EncryptedCardCommand):
             return cmd(self.cardService.connection, self.__session_key)
         else:
             return cmd(self.cardService.connection)
 
-
-    def open_vault(self, vault_id, password):
-        return self.__run_command(FC_VAULT_OPEN(vault_id, password))
-
+    def vault(self, i, password):
+        return VaultAccess(self, i, password)
 
     def __enter__(self, *args, **kvargs):
         self.cardService = self.cardRequest.waitforcard()
