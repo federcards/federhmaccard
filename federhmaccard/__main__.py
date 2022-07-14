@@ -3,7 +3,15 @@
 from .card_io import CardSession
 from getpass import getpass
 
+from .gui import *
 
+
+x = FederHMACCard()
+
+x.mainloop()
+
+
+"""
 with CardSession() as session:
 
     while True:
@@ -25,3 +33,4 @@ with CardSession() as session:
         else:
             print("Import secret.")
             vault.import_secret(getpass("Secret to be imported?").encode("ascii"))
+"""
