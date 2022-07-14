@@ -12,6 +12,7 @@ class FederHMACCard(Tk):
     def __init__(self):
         Tk.__init__(self)
 
+        self.title("FederHMACCard: Password Generator")
         self.__init_widgets()
 
 
