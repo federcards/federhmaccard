@@ -36,13 +36,14 @@ def run_card_session():
     print("Waiting for card...")
 
     with CardSession() as card_session:
-
         print("Card connected.")
         publish("card/status", "connected")
 
         password = b"federcard"
         if card_session.login(password):
-            pass
+            publish("card/status", "unlocked")
+        else:
+            publish("card/status", "locked")
 
         while True:
             time.sleep(0.5)
@@ -68,3 +69,17 @@ def call_card_login(password):
     else:
         publish("card/status", "locked")
 subscribe("card/do/login", call_card_login)
+
+
+def call_select_vault(vault_id):
+    if not card_session: return
+    vault = card_session.vault(vault_id)
+    publish("card/vault/status", vault.status)
+subscribe("card/do/vault/select", call_select_vault)
+
+
+def call_vault_open(password):
+    if not card_session or not vault: return
+    vault.open(password)
+    publish("card/vault/status", vault.status)
+subscribe("card/do/vault/open", call_vault_open)

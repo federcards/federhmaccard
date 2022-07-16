@@ -45,3 +45,11 @@ class VaultAccess:
         else:
             print(ret)
             return None
+
+    def HMAC_SHA256(self, message):
+        ret = self.session.run_command(FC_VAULT_HMAC_SHA256(message))
+        if ret.startswith(b'OK,'):
+            return ret[3:]
+        else:
+            print(ret)
+            return None

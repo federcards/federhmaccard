@@ -15,8 +15,8 @@ class FederHMACCard(Tk):
     def __init__(self):
         Tk.__init__(self)
 
-        self.width = 800
-        self.height = 400
+        self.width = 1000
+        self.height = 600
 
         self.title("FederHMACCard: Password Generator")
         self.geometry("%dx%d" % (self.width, self.height))
