@@ -3,13 +3,10 @@
 from tkinter import *
 from tkinter import ttk
 
-class FrameVault(ttk.LabelFrame):
+class FrameVault(Frame):
 
-    def __init__(self, parent):
-        ttk.LabelFrame.__init__(
-            self, parent,
-            text="Vault"
-        )
+    def __init__(self, parent, *args, **kvargs):
+        Frame.__init__(self, parent, *args, **kvargs)
 
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=3)

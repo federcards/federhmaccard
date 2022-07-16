@@ -3,6 +3,7 @@
 from tkinter import *
 from tkinter import ttk
 
+from .FrameWaitCard   import FrameWaitCard
 from .FrameCardUnlock import FrameCardUnlock
 from .FrameVault      import FrameVault
 
@@ -13,22 +14,36 @@ class FederHMACCard(Tk):
         Tk.__init__(self)
 
         self.title("FederHMACCard: Password Generator")
+        self.geometry("500x400")
         self.__init_widgets()
 
+        self.card_ready = False
+        self.card_unlocked = False
+
+        self.switch_frame()
 
     def __init_widgets(self):
-        self.rowconfigure(0, weight=1)
-        self.rowconfigure(1, weight=1)
-        self.rowconfigure(2, weight=5)
+        kvargs = {}
+        frame_wait = FrameWaitCard(self, **kvargs)
+        frame_unlock = FrameCardUnlock(self, **kvargs)
+        frame_vault = FrameVault(self, **kvargs)
 
-        self.columnconfigure(0, weight=1)
+        self.__frames = {
+            "unlock": frame_unlock,
+            "vault":  frame_vault,
+            "wait": frame_wait,
+        }
 
-        self.txt_log = Text(self, height=10)
-        self.txt_log.grid(row=0, column=0, padx=10, pady=10, sticky="news")
-
-        self.frame_unlock = FrameCardUnlock(self)
-        self.frame_unlock.grid(row=1, column=0, padx=10, pady=10, sticky="ew")
-
-
-        self.frame_vault = FrameVault(self)
-        self.frame_vault.grid(row=2, column=0, padx=10, pady=10, sticky="ew")
+    def switch_frame(self):
+        frame = "wait"
+        if self.card_ready:
+            if self.card_unlocked:
+                frame = "vault"
+            else:
+                frame = "unlock"
+        for fn in self.__frames:
+            if fn == frame:
+                self.__frames[fn].pack(fill="both", expand=True)
+            else:
+                self.__frames[fn].pack_forget()
+            
