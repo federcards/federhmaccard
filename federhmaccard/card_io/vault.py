@@ -19,7 +19,10 @@ class VaultAccess:
         return self
 
     def __exit__(self, *args, **kvargs):
-        print(self.session.run_command(FC_VAULT_CLOSE()))
+        print(self.close())
+
+    def close(self):
+        return self.session.run_command(FC_VAULT_CLOSE())
 
     @property
     def status(self):

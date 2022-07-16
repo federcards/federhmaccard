@@ -61,10 +61,18 @@ threading.Thread(target=autorestart_card_session).start()
 
 ##############################################################################
 
+def _assert_bytes(s):
+    if type(s) == str:
+        return s.encode("ascii")
+    if type(s) == bytes:
+        return s
+    raise Exception("Input parameter must be bytes.")
+
 def call_card_login(password):
+    global card_session, vault
     if not card_session: return
     print("Doing card login...")
-    if card_session.login(password):
+    if card_session.login(_assert_bytes(password)):
         publish("card/status", "unlocked")
     else:
         publish("card/status", "locked")
@@ -72,14 +80,21 @@ subscribe("card/do/login", call_card_login)
 
 
 def call_select_vault(vault_id):
+    global card_session, vault
     if not card_session: return
+    if vault:
+        vault.close()
+        publish("card/vault/status", vault.status)
     vault = card_session.vault(vault_id)
     publish("card/vault/status", vault.status)
 subscribe("card/do/vault/select", call_select_vault)
 
 
 def call_vault_open(password):
+    global card_session, vault
     if not card_session or not vault: return
-    vault.open(password)
+    print("open vault...")
+    if not vault.open(_assert_bytes(password)):
+        publish("error/vault/wrong-password")
     publish("card/vault/status", vault.status)
 subscribe("card/do/vault/open", call_vault_open)

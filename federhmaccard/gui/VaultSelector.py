@@ -2,6 +2,7 @@
 
 from tkinter import *
 from tkinter import ttk
+from ..pubsub import publish, subscribe
 
 # The smart card has 72 slots, and we need a way to help people remember which
 # slot they use. Luckily we have an ancient Chinese literature called
@@ -90,6 +91,48 @@ assert(len(set([e[1] for e in wordlist])) == 72)
 class VaultSelector(Frame):
 
     def __init__(self, parent):
-        Frame.__init__(self)
+        Frame.__init__(self, parent)
 
-        
+        self.options = ["--- SELECT A VAULT ---",] + [
+            "%2d - %s" % (i + 1, " ".join(wordlist[i]))
+            for i in range(0, len(wordlist))
+        ]
+
+        self.label = Label(self, text="Choose the vault ID from 1 to 72:")
+        self.label.pack(side="top", expand=False, fill="x")
+
+        combobox = ttk.Combobox(self, values=self.options, state="readonly")
+
+        self.combobox = combobox
+        self.combobox.pack(side="top", expand=True, fill=None)
+        self.combobox.bind("<<ComboboxSelected>>", self.on_vault_changed)
+
+        self.vault_status = Label(self, text="Select a vault to proceed.")
+        self.vault_status.pack(side="top", expand=True, fill="x")
+
+        subscribe("card/vault/status", self.on_vault_status_updated)
+
+        combobox.current(0)
+        self.on_vault_changed()
+
+    def on_vault_changed(self, *args):
+        vault_id = self.combobox.current() 
+        if vault_id < 1: return
+        publish("card/do/vault/select", vault_id)
+        print("Select vault: %d" % vault_id)
+
+    def on_vault_status_updated(self, status):
+        print(status)
+        if status["success"]:
+            active_vault = status["vault"]
+            vault_opened = status["open"]
+            if vault_opened:
+                self.vault_status.config(
+                    text="Vault #%d opened." % active_vault)
+                self.combobox.current(active_vault)
+            else:
+                self.vault_status.config(
+                    text="Input password to decrypt this vault, or reset it with new secret.")
+        else:
+            self.vault_status.config(
+                text="Vault unavailable. Card not unlocked?")
