@@ -52,7 +52,7 @@ def HMAC_SHA256(key, data):
 class CardSession:
 
     def __init__(self):
-        self.cardRequest = CardRequest(timeout=10) #, cardType=cardtype)
+        self.cardRequest = CardRequest(timeout=None) #, cardType=cardtype)
 
     def login(self, password):
         conn = self.cardService.connection
@@ -97,4 +97,5 @@ class CardSession:
             
 
     def __exit__(self, *args, **kvargs):
-        pass
+        self.cardService.connection.disconnect()
+
