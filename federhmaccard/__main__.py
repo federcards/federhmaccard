@@ -98,3 +98,13 @@ def call_vault_open(password):
         publish("error/vault/wrong-password")
     publish("card/vault/status", vault.status)
 subscribe("card/do/vault/open", call_vault_open)
+
+
+def call_vault_totp_sha1(seed):
+    global card_session, vault
+    if not card_session or not vault: return
+    result = vault.HMAC_SHA1(_assert_bytes(seed))
+    if not result:
+        return publish("error/vault/locked")
+    publish("result/totp/sha1", result)
+subscribe("card/do/vault/totp-sha1", call_vault_totp_sha1)
