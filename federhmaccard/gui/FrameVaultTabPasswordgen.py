@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from tkinter import *
 from tkinter import ttk
+from .PasswordGen import PasswordGen
 from .ValueEntry import ValueEntry
 from ..pubsub import publish, subscribe
 
@@ -15,14 +16,11 @@ class TabPasswordgen(Frame):
         self.columnconfigure(2, weight=1)
 
         ROW = 0
-       
-        self.lbl_result = Label(self, text="Result:")
-        self.lbl_result.grid(row=ROW, column=0, columnspan=3, sticky="we", pady=5)
 
-        ROW += 1
-
-        self.result = ValueEntry(self, state="readonly")
-        self.result.grid(row=ROW, column=0, columnspan=3, sticky="we", pady=20)
+        self.result = PasswordGen(self, text="Password Generator")
+        self.result.grid(
+            row=ROW, column=0, columnspan=3, sticky="news",
+            padx=10, pady=10, ipadx=10, ipady=10)
 
         ROW += 1
 
@@ -64,4 +62,4 @@ class TabPasswordgen(Frame):
         self.__show_result("SHA256", digest)
 
     def __show_result(self, algo, digest):
-        self.result.value.set(digest.hex())
+        self.result.seed(digest)
