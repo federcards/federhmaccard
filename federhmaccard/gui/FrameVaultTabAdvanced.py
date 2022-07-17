@@ -21,8 +21,8 @@ class TabAdvanced(Frame):
 
         self.frame_import = CustomizedLabelFrame(self, text="Import secret")
 
-        self.frame_import.columnconfigure(0, weight=4)
-        self.frame_import.columnconfigure(1, weight=2)
+        self.frame_import.columnconfigure(0, weight=1)
+        self.frame_import.columnconfigure(1, weight=1)
         self.frame_import.columnconfigure(2, weight=1)
 
         self.lbl_import_warning = Label(
@@ -32,15 +32,26 @@ class TabAdvanced(Frame):
         self.lbl_import_warning.grid(row=0, column=0, columnspan=3, sticky="ew")
 
         self.import_secret = ValueEntry(self.frame_import)
-        self.import_secret.grid(row=1, column=0, sticky="ew")
+        self.import_secret.grid(row=1, column=0, columnspan=2, sticky="ew")
 
         self.import_format = ttk.Combobox(
             self.frame_import, values=IMPORT_FORMATS, state="readonly")
-        self.import_format.grid(row=1, column=1, sticky="ew")
+        self.import_format.grid(row=1, column=2, sticky="ew")
         self.import_format.current(0)
 
+        self.import_desc = Label(self.frame_import, text="\n".join([
+            "Notes:",
+            "1. This operation will write a secret to the vault. ",
+            "The written secret is not retractable from the vault.",
+            "2. Any existing secret in this vault will be lost. ",
+            "If you have no backup of that secret, do not import!",
+            "3. If you intend to use the vault for TOTP based verification",
+            " codes, you may need to select Base32 encoding."
+        ]))
+        self.import_desc.grid(row=2, column=0, columnspan=3, sticky="news")
+
         self.btn_import = Button(self.frame_import, text="Import")
-        self.btn_import.grid(row=1, column=2, sticky="ew")
+        self.btn_import.grid(row=3, column=1, sticky="ew")
         self.btn_import.bind("<Button-1>", self.on_import_secret)
 
         
@@ -60,16 +71,20 @@ class TabAdvanced(Frame):
         secretformat = IMPORT_FORMATS[self.import_format.current()]
 
         try:
+            print("#1")
+            assert re.match("^[\x20-\x7e]+$", newsecret)
             if secretformat == "Base32":
-                newsecret = base64.b32decode(newsecret)
+                print("#2")
+                newsecret += ("=" * ((8 - (len(newsecret) % 8)) % 8))
+                print("#3", newsecret)
+                newsecret = base64.b32decode(newsecret, casefold=True)
             elif secretformat == "Base64":
                 newsecret = base64.b64decode(newsecret)
             elif secretformat == "HEX":
                 newsecret = bytes.fromhex(newsecret)
-            else:
-                assert re.match("^[\x20-\x7e]+$", newsecret)
             assert len(newsecret) <= 64
-        except:
+        except Exception as e:
+            print(e)
             messagebox.showerror("Error", "New secret does not match selected format. Or it must not be longer than 64 bytes.")
             return
 
