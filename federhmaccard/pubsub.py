@@ -5,6 +5,7 @@ import queue
 
 __queued = queue.Queue()
 
+exit_flag = threading.Event()
 
 def publish(topic, *args, **kvargs):
     global __queued
@@ -25,8 +26,11 @@ def subscribe(topic, callback):
 
 
 def dispatching_thread(q, m):
-    while True:
+    global exit_flag
+    while not exit_flag.is_set():
         msg = q.get()
+        if msg == "exit":
+            break
         topic = msg["topic"]
         args = msg["args"]
         kvargs = msg["kvargs"]
@@ -38,6 +42,6 @@ def dispatching_thread(q, m):
                 callback(*args, **kvargs)
             except Exception as e:
                 print(e)
-
+    print("Event dispatcher: finished.")
 t = threading.Thread(target=dispatching_thread, args=(__queued, __map))
 t.start()

@@ -8,6 +8,7 @@ from ..pubsub import publish, subscribe
 from .FrameVaultTabDecrypt import TabDecrypt
 from .FrameVaultTabPasswordgen import TabPasswordgen
 from .FrameVaultTabTOTP import TabTOTP
+from .FrameVaultTabAdvanced import TabAdvanced
 
 
 class FrameVaultTabController(ttk.Notebook):
@@ -21,12 +22,12 @@ class FrameVaultTabController(ttk.Notebook):
         self.tab_decrypt = TabDecrypt(self)
         self.tab_pwdgen = TabPasswordgen(self)
         self.tab_totp = TabTOTP(self)
-        self.tab_manage = Frame(self)
+        self.tab_advanced = TabAdvanced(self)
         
         self.add(self.tab_decrypt, text="Unlock vault")
         self.add(self.tab_pwdgen, text="Password Generator")
         self.add(self.tab_totp, text="Time-based Codes")
-        self.add(self.tab_manage, text="Advanced")
+        self.add(self.tab_advanced, text="Advanced")
         
         self.update_status()
 
@@ -34,9 +35,10 @@ class FrameVaultTabController(ttk.Notebook):
         for i in range(0, 4): self.hide(i)
         if not vault_open:
             self.add(self.tab_decrypt)
+            self.add(self.tab_advanced)#, text="Advanced")
             self.select(self.tab_decrypt)
         else:
             self.add(self.tab_pwdgen)#, text="Password Generation")
             self.add(self.tab_totp)
-            self.add(self.tab_manage)#, text="Advanced")
+            self.add(self.tab_advanced)#, text="Advanced")
             self.select(self.tab_pwdgen)

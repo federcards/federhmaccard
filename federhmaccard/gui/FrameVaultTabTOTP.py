@@ -3,6 +3,7 @@ from tkinter import *
 from tkinter import ttk
 from .ValueEntry import ValueEntry
 from ..pubsub import publish, subscribe
+import struct
 import time
 
 
@@ -25,18 +26,22 @@ class TabTOTP(Frame):
 
         
     def __timecode(self, interval=30):
-        now = int(time.time() / 30)
-        bstr = b""
-        while now != 0:
-            bstr = bytes([now & 0xFF]) + bstr
-            now >>= 8
-        bstr = bstr.rjust(8, b"\x00")
+        num = int(time.time()) // interval 
+        bstr = struct.pack('>Q', num)
         return bstr
+
+    def __show_digits(self, digest, digits=6):
+        offset = digest[-1] & 0xF
+        token_base = digest[offset:offset+4]
+
+        token_val = struct.unpack('>I', token_base)[0] & 0x7fffffff
+        token_num = token_val % (10**digits)
+
+        token = '{0:06d}'.format(token_num)
+        return token
 
     def on_do_totp_sha1(self, *args):
         publish("card/do/vault/totp-sha1", self.__timecode())
 
     def on_totp_sha1_result(self, code):
-        code = code[:4]
-        number = (code[0] << 24) | (code[1] << 16) | (code[2] << 8) | code[3]
-        self.result.config(text=str(number % (10**6)))
+        self.result.config(text=self.__show_digits(code, 8))

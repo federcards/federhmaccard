@@ -9,15 +9,59 @@ class TabPasswordgen(Frame):
     
     def __init__(self, parent, *args, **kvargs):
         Frame.__init__(self, parent, *args, **kvargs)
-        
-        self.lbl_prompt = Label(self, text="Password:")
-        self.lbl_prompt.grid(column=0, row=0, padx=10, pady=20, sticky="e")
 
-        self.txt_password = ValueEntry(self)
-        self.txt_password.grid(column=1, row=0, padx=10, pady=20, sticky="ew")
-        self.txt_password.value.set("password")
+        self.columnconfigure(0, weight=1)
+        self.columnconfigure(1, weight=1)
+        self.columnconfigure(2, weight=1)
 
-        self.btn_login = Button(self, text="Decrypt")
-        self.btn_login.grid(column=2, row=0, padx=10, pady=20, sticky="ew")
+        ROW = 0
+       
+        self.lbl_result = Label(self, text="Result:")
+        self.lbl_result.grid(row=ROW, column=0, columnspan=3, sticky="we", pady=5)
+
+        ROW += 1
+
+        self.result = ValueEntry(self, state="readonly")
+        self.result.grid(row=ROW, column=0, columnspan=3, sticky="we", pady=20)
+
+        ROW += 1
+
+        self.lbl_salt = Label(self, text="Salt")
+        self.lbl_salt.grid(row=ROW, column=0)
+
+        self.lbl_algo = Label(self, text="Algorithm")
+        self.lbl_algo.grid(row=ROW, column=1)
+
+        ROW += 1
+
+        self.salt = ValueEntry(self)
+        self.salt.grid(row=ROW, column=0, sticky="we")
+
+        self.algo = ttk.Combobox(self, values=["SHA1", "SHA256"], state="readonly")
+        self.algo.grid(row=ROW, column=1, sticky="we")
+        self.algo.current(0)
+
+        self.btn_generate = Button(self, text="Generate")
+        self.btn_generate.grid(row=ROW, column=2, sticky="we")
+        self.btn_generate.bind("<Button-1>", self.on_generate_clicked)
 
 
+        self.__bind_events()
+
+    def on_generate_clicked(self, *args):
+        salt = self.salt.value.get()
+        algo = ["sha1", "sha256"][self.algo.current()]
+        publish("card/do/vault/hmac-%s" % algo, salt)
+
+    def __bind_events(self):
+        subscribe("result/hmac/sha1", self.on_hmac_sha1_result)
+        subscribe("result/hmac/sha256", self.on_hmac_sha256_result)
+
+    def on_hmac_sha1_result(self, digest):
+        self.__show_result("SHA1", digest)
+
+    def on_hmac_sha256_result(self, digest):
+        self.__show_result("SHA256", digest)
+
+    def __show_result(self, algo, digest):
+        self.result.value.set(digest.hex())
