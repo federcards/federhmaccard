@@ -34,10 +34,12 @@ class TabPasswordgen(Frame):
 
         self.salt = ValueEntry(self)
         self.salt.grid(row=ROW, column=0, sticky="we")
+        self.salt.bind("<FocusOut>", self.on_seed_invalidated)
 
         self.algo = ttk.Combobox(self, values=["SHA1", "SHA256"], state="readonly")
         self.algo.grid(row=ROW, column=1, sticky="we")
         self.algo.current(0)
+        self.algo.bind("<FocusOut>", self.on_seed_invalidated)
 
         self.btn_generate = Button(self, text="Generate")
         self.btn_generate.grid(row=ROW, column=2, sticky="we")
@@ -45,6 +47,9 @@ class TabPasswordgen(Frame):
 
 
         self.__bind_events()
+
+    def on_seed_invalidated(self, *args):
+        self.result.seed(None)
 
     def on_generate_clicked(self, *args):
         salt = self.salt.value.get()
