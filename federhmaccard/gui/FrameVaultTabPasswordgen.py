@@ -42,9 +42,25 @@ class TabPasswordgen(Frame):
         self.algo.bind("<FocusOut>", self.on_seed_invalidated)
 
         self.btn_generate = Button(self, text="Generate")
-        self.btn_generate.grid(row=ROW, column=2, sticky="we")
+        self.btn_generate.grid(row=ROW, rowspan=3, column=2, sticky="news")
         self.btn_generate.bind("<Button-1>", self.on_generate_clicked)
 
+        ROW += 1
+
+        Label(
+            self,
+            text="Or, input a Password Request URI (PRU):",
+            justify="left"
+        ).grid(
+            row=ROW,
+            column=0, columnspan=2,
+            sticky="ew"
+        )
+
+        ROW += 1
+
+        self.pru = ValueEntry(self)
+        self.pru.grid(row=ROW, column=0, columnspan=2, sticky="ew")
 
         self.__bind_events()
 
