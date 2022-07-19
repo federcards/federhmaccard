@@ -2,10 +2,10 @@ from ._prototype import EncryptedCardCommand
 
 class FC_VAULT_REENCRYPT(EncryptedCardCommand):
 
-    def __init__(self, vault_id, password):
+    def __init__(self, password):
         assert type(password) == bytes
         EncryptedCardCommand.__init__(self, 0x84, 0x10)
-        self.__data = bytes([vault_id]) + password
+        self.__data = password
 
     def build_request(self):
         return self.__data 

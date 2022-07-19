@@ -43,6 +43,11 @@ class VaultAccess:
         print(ret)
         return ret.startswith(b'OK')
 
+    def reencrypt(self, password):
+        ret = self.session.run_command(FC_VAULT_REENCRYPT(password))
+        print(ret)
+        return ret.startswith(b"OK")
+
     def HMAC_SHA1(self, message):
         ret = self.session.run_command(FC_VAULT_HMAC_SHA1(message))
         if ret.startswith(b'OK,'):

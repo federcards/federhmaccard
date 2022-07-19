@@ -71,7 +71,10 @@ class TabAdvanced(Frame):
 
         self.btn_pwd = Button(self.frame_pwd, text="Change password...")
         self.btn_pwd.pack(side="left")
+        self.btn_pwd.bind("<Button-1>", self.on_change_password)
 
+        subscribe("error/vault/failed-reencrypt", self.on_reencrypt_failure)
+        subscribe("result/reencrypt/ok", self.on_reencrypt_ok)
         subscribe("card/vault/status", self.on_vault_status)
 
     def on_vault_status(self, status):
@@ -125,3 +128,27 @@ class TabAdvanced(Frame):
 
         publish("card/do/vault/import", newsecret)
         
+
+    def on_change_password(self, *args):
+        pwd1 = simpledialog.askstring(
+            "Change password", "Enter new password:", show='*')
+        if pwd1 == None:
+            messagebox.showinfo("Abort", "Password not changed.")
+            return
+        pwd2 = simpledialog.askstring(
+            "Confirm password", "Enter your password again:", show='*')
+        if pwd2 == None:
+            messagebox.showinfo("Abort", "Password not changed.")
+            return
+        if pwd2 != pwd1:
+            messagebox.showerror(
+                "Abort", "Two input of passwords do not match.")
+            return
+
+        publish("card/do/vault/reencrypt", pwd2)
+
+    def on_reencrypt_ok(self, *args):
+        messagebox.showinfo("Success", "Vault password changed.")
+
+    def on_reencrypt_failure(self, *args):
+        messagebox.showinfo("Error", "Failed changing vault password.")

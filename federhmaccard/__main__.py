@@ -117,6 +117,17 @@ def call_vault_import(secret):
 subscribe("card/do/vault/import", call_vault_import)
 
 
+def call_vault_reencrypt(password):
+    global card_session, vault
+    if not card_session or not vault: return
+    if not vault.reencrypt(_assert_bytes(password)):
+        publish("error/vault/failed-reencrypt")
+    else:
+        publish("result/reencrypt/ok")
+    publish("card/vault/status", vault.status)
+subscribe("card/do/vault/reencrypt", call_vault_reencrypt)
+
+
 def call_vault_totp_sha1(seed):
     global card_session, vault
     if not card_session or not vault: return
