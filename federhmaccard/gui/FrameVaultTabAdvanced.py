@@ -53,11 +53,38 @@ class TabAdvanced(Frame):
         self.btn_import = Button(self.frame_import, text="Import")
         self.btn_import.grid(row=3, column=1, sticky="ew")
         self.btn_import.bind("<Button-1>", self.on_import_secret)
-
         
         self.frame_import.pack(side="top", fill="x", expand=False)
         subscribe("error/vault/failed-import", self.on_import_failure)
         subscribe("result/import/ok", self.on_import_ok)
+
+        # change password frame
+
+        self.frame_pwd = CustomizedLabelFrame(self, text="Change password")
+        self.frame_pwd.pack(side="top", fill="x", expand=False)
+        self.frame_pwd.enable(False)
+
+        Label(
+            self.frame_pwd,
+            text="To change the password of this vault, click here."
+        ).pack(side="left")
+
+        self.btn_pwd = Button(self.frame_pwd, text="Change password...")
+        self.btn_pwd.pack(side="left")
+
+        subscribe("card/vault/status", self.on_vault_status)
+
+    def on_vault_status(self, status):
+        print("adv", status)
+        try:
+            if status["success"] and status["open"]:
+                self.frame_pwd.enable(True)
+                self.frame_import.enable(False)
+                return
+        except Exception as e:
+            print(e)
+        self.frame_pwd.enable(False)
+        self.frame_import.enable(True)
 
     def on_import_failure(self, *args):
         messagebox.showerror("Error", "Failed to import secret.")
