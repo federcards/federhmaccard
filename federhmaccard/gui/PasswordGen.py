@@ -72,6 +72,7 @@ class PasswordGen(ttk.LabelFrame):
         ]:
             e.bind("<ButtonRelease>", self.update_result)
             e.bind("<Key>", self.update_result)
+        self.pwdlength.bind("<<ComboboxSelected>>", self.update_result)
 
     def seed(self, s):
         self.__seed = s 
