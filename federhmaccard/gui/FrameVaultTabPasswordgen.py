@@ -5,6 +5,8 @@ from .PasswordGen import PasswordGen
 from .ValueEntry import ValueEntry
 from .BinaryValueEntry import BinaryValueEntry
 from ..pubsub import publish, subscribe
+from ..password_request_uri import FederPRURI, FederPRURIAlgorithm,\
+    FederPRURICombinations
 
 
 class TabPasswordgen(Frame):
@@ -12,8 +14,8 @@ class TabPasswordgen(Frame):
     def __init__(self, parent, *args, **kvargs):
         Frame.__init__(self, parent, *args, **kvargs)
 
-        self.columnconfigure(0, weight=1)
-        self.columnconfigure(1, weight=1)
+        self.columnconfigure(0, weight=5)
+        self.columnconfigure(1, weight=5)
         self.columnconfigure(2, weight=1)
 
         ROW = 0
@@ -43,7 +45,7 @@ class TabPasswordgen(Frame):
         self.algo.bind("<FocusOut>", self.on_seed_invalidated)
 
         self.btn_generate = Button(self, text="Generate")
-        self.btn_generate.grid(row=ROW, rowspan=3, column=2, sticky="news")
+        self.btn_generate.grid(row=ROW, column=2, sticky="news")
         self.btn_generate.bind("<Button-1>", self.on_generate_clicked)
 
         ROW += 1
@@ -62,6 +64,11 @@ class TabPasswordgen(Frame):
 
         self.pru = ValueEntry(self)
         self.pru.grid(row=ROW, column=0, columnspan=2, sticky="ew")
+        self.pru.value.trace_add("write", self.on_pru_changed)
+
+        self.btn_pruapply = Button(self, text="Apply")
+        self.btn_pruapply.grid(row=ROW, column=2, sticky="news")
+        self.btn_pruapply.bind("<Button-1>", self.on_apply_pru)
 
         self.__bind_events()
 
@@ -72,6 +79,33 @@ class TabPasswordgen(Frame):
         salt = bytes.fromhex(self.salt.hexvalue.get())
         algo = ["sha1", "sha256"][self.algo.current()]
         publish("card/do/vault/hmac-%s" % algo, salt)
+
+    def on_pru_changed(self, *args):
+        self.pru.config(bg="white")
+
+    def on_apply_pru(self, *args):
+        try:
+            pru = FederPRURI.fromstring(self.pru.get())
+        except:
+            self.pru.config(bg="red")
+            return
+
+        if pru.algorithm == FederPRURIAlgorithm.SHA256:
+            self.algo.current(1)
+        else:
+            self.algo.current(0)
+
+        self.salt.set_bytes_to_hex_value(pru.seed)
+
+        c = pru.combinations
+        self.result.charAZ.value.set(
+            bool(c & FederPRURICombinations.UPPERCASE.value))
+        self.result.charaz.value.set(
+            bool(c & FederPRURICombinations.LOWERCASE.value))
+        self.result.char09.value.set(
+            bool(c & FederPRURICombinations.NUMERICAL.value))
+        self.result.charspecial.value.set(
+            bool(c & FederPRURICombinations.SPECIAL.value))
 
     def __bind_events(self):
         subscribe("result/hmac/sha1", self.on_hmac_sha1_result)
