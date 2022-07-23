@@ -14,12 +14,14 @@ class App(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         self.start()
+        subscribe("exit", self.on_exit)
 
     def callback(self):
         exit_flag.set()
         print("exit flag set. exiting.")
         publish("exit")
-        #exit()
+
+    def on_exit(self):
         self.root.quit()
 
     def run(self):

@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
+import hashlib
 from smartcard.ATR import ATR
 from smartcard.CardType import ATRCardType
 from smartcard.CardRequest import CardRequest
-import hashlib
+from smartcard.CardMonitoring import CardMonitor
 from .crypto import crypto_encrypt, crypto_decrypt
+from .observer import FederCardObserver
 
 
 from .commands._prototype import *
@@ -53,6 +55,11 @@ class CardSession:
 
     def __init__(self):
         self.cardRequest = CardRequest(timeout=None) #, cardType=cardtype)
+        
+        self.cardMonitor = CardMonitor()
+        self.cardObserver = FederCardObserver()
+        self.cardMonitor.addObserver(self.cardObserver)
+
 
     def login(self, password):
         conn = self.cardService.connection
@@ -98,4 +105,8 @@ class CardSession:
 
     def __exit__(self, *args, **kvargs):
         self.cardService.connection.disconnect()
-
+        # don't forget to remove observer, or the
+        # monitor will poll forever...
+        self.cardMonitor.deleteObserver(self.cardObserver)
+        self.cardMonitor.stop()
+        self.cardObserver = None
