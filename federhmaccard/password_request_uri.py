@@ -16,22 +16,66 @@ class FederPRURICombinations(Enum):
     SPECIAL   = 8
 
 
+def parse_qs(string):
+    ret = {}
+    parts = string.split("&")
+    for kv in parts:
+        kvparts = kv.split("=")
+        if len(kvparts) < 2: kvparts += [None,]
+        k,v = kvparts[:2]
+        ret[k] = v
+    return ret
+
 
 
 class FederPRURI:
 
-#    @static
-#    def fromstring(self, uri):
-#        pass
+    @staticmethod
+    def fromstring(uri):
+        parsed = urlparse(uri)
+        if parsed.scheme != SCHEME:
+            raise Exception("Not a valid FederPRURI.")
+
+        qsparsed = parse_qs(parsed.query)
+        print(qsparsed)
+
+        algorithm = FederPRURIAlgorithm.SHA1
+        if "algorithm" in qsparsed:
+            if qsparsed["algorithm"] == "SHA256":
+                algorithm = FederPRURIAlgorithm.SHA256
+            elif qsparsed["algorithm"] != 'SHA1':
+                raise Exception("Unsupported hash algorithm.")
+
+        seed = b""
+        if "seed" in qsparsed:
+            seed = unquote_to_bytes(qsparsed["seed"])
+        
+        combinations = ( 
+            FederPRURICombinations.UPPERCASE.value |
+            FederPRURICombinations.LOWERCASE.value |
+            FederPRURICombinations.NUMERICAL.value |
+            FederPRURICombinations.SPECIAL.value )
+            
+        if "combinations" in qsparsed:
+            combinations = int(qsparsed["combinations"][0])
+
+        print("seed", seed)
+
+        return FederPRURI(algorithm, seed, combinations)
+
+
 
     def __init__(self, algorithm, seed, combinations):
         assert isinstance(algorithm, FederPRURIAlgorithm)
-        assert isinstance(combinations, FederPRURICombinations)
-        assert int(combinations.value) != 0
         assert type(seed) in [str, bytes]
+        if isinstance(combinations, FederPRURICombinations):
+            combinations = combinations.value
+        else:
+            assert type(combinations) == int
+        assert combinations != 0
 
         self.algorithm = algorithm
-        self.combinations = combinations.value & 0x0F
+        self.combinations = combinations & 0x0F
 
         if type(seed) == bytes:
             self.seed = seed
@@ -57,4 +101,6 @@ if __name__ == "__main__":
         combinations=FederPRURICombinations.UPPERCASE
     )
 
+    u2 = FederPRURI.fromstring(str(u))
     print(str(u))
+    print(str(u2))

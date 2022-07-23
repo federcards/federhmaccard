@@ -8,6 +8,7 @@ from tkinter import ttk
 from tkinter import messagebox, simpledialog
 
 from .ValueEntry import ValueEntry
+from .BinaryValueEntry import BinaryValueEntry
 from .CustomizedLabelFrame import CustomizedLabelFrame
 from ..pubsub import publish, subscribe
 
@@ -31,13 +32,8 @@ class TabAdvanced(Frame):
         )
         self.lbl_import_warning.grid(row=0, column=0, columnspan=3, sticky="ew")
 
-        self.import_secret = ValueEntry(self.frame_import)
-        self.import_secret.grid(row=1, column=0, columnspan=2, sticky="ew")
-
-        self.import_format = ttk.Combobox(
-            self.frame_import, values=IMPORT_FORMATS, state="readonly")
-        self.import_format.grid(row=1, column=2, sticky="ew")
-        self.import_format.current(0)
+        self.import_secret = BinaryValueEntry(self.frame_import)
+        self.import_secret.grid(row=1, column=0, columnspan=3, sticky="ew")
 
         self.import_desc = Label(self.frame_import, text="\n".join([
             "Notes:",
@@ -97,26 +93,11 @@ class TabAdvanced(Frame):
         self.import_secret.value.set("")
 
     def on_import_secret(self, *args):
-        newsecret = self.import_secret.value.get().strip()
-        secretformat = IMPORT_FORMATS[self.import_format.current()]
-
+        newsecret = None
         try:
-            print("#1")
-            assert re.match("^[\x20-\x7e]+$", newsecret)
-            if secretformat == "Base32":
-                print("#2")
-                newsecret += ("=" * ((8 - (len(newsecret) % 8)) % 8))
-                print("#3", newsecret)
-                newsecret = base64.b32decode(newsecret, casefold=True)
-            elif secretformat == "Base64":
-                newsecret = base64.b64decode(newsecret)
-            elif secretformat == "HEX":
-                newsecret = bytes.fromhex(newsecret)
-            assert len(newsecret) <= 64
-        except Exception as e:
-            print(e)
-            messagebox.showerror("Error", "New secret does not match selected format. Or it must not be longer than 64 bytes.")
-            return
+            newsecret = bytes.fromhex(self.import_secret.hexvalue.get())
+        except:
+            pass
 
         if not newsecret:
             messagebox.showerror("Error", "Cannot import empty secret.")
