@@ -61,13 +61,16 @@ class BinaryValueEntry(Frame):
                 except Exception as e:
                     print("Error decoding user input:", e)
                     error = True
+        def setnewvalue(v):
+            if self.hexvalue.get() != v:
+                self.hexvalue.set(v)
 
         if not error:
             self.entry.config(bg="white")
-            self.hexvalue.set(outputvalue.hex())
+            setnewvalue(outputvalue.hex())
         else:
             self.entry.config(bg="red")
-            self.hexvalue.set("")
+            setnewvalue("")
         if self.onchanged:
             self.onchanged()
 

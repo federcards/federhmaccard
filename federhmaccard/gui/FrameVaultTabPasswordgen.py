@@ -3,6 +3,7 @@ from tkinter import *
 from tkinter import ttk
 from .PasswordGen import PasswordGen
 from .ValueEntry import ValueEntry
+from .BinaryValueEntry import BinaryValueEntry
 from ..pubsub import publish, subscribe
 
 
@@ -32,9 +33,9 @@ class TabPasswordgen(Frame):
 
         ROW += 1
 
-        self.salt = ValueEntry(self)
+        self.salt = BinaryValueEntry(self)
         self.salt.grid(row=ROW, column=0, sticky="we")
-        self.salt.bind("<FocusOut>", self.on_seed_invalidated)
+        self.salt.hexvalue.trace_add("write", self.on_seed_invalidated)
 
         self.algo = ttk.Combobox(self, values=["SHA1", "SHA256"], state="readonly")
         self.algo.grid(row=ROW, column=1, sticky="we")
@@ -68,7 +69,7 @@ class TabPasswordgen(Frame):
         self.result.seed(None)
 
     def on_generate_clicked(self, *args):
-        salt = self.salt.value.get()
+        salt = bytes.fromhex(self.salt.hexvalue.get())
         algo = ["sha1", "sha256"][self.algo.current()]
         publish("card/do/vault/hmac-%s" % algo, salt)
 
