@@ -12,15 +12,19 @@ from .FrameVault      import FrameVault
 
 class FederHMACCard(Tk):
 
-    def __init__(self):
+    def __init__(self, csv=None):
         Tk.__init__(self)
+
+        s = ttk.Style()
+        s.configure(".", font=("monospace", 12))
+        s.configure('Treeview', font=("monospace", 10), rowheight=40)
 
         self.width = 1024
         self.height = 768 
 
         self.title("FederHMACCard: Password Generator")
         self.geometry("%dx%d" % (self.width, self.height))
-        self.__init_widgets()
+        self.__init_widgets(csv=csv)
 
         self.card_ready = False
         self.card_unlocked = False
@@ -28,11 +32,11 @@ class FederHMACCard(Tk):
         self.switch_frame()
         self.__bind_events()
 
-    def __init_widgets(self):
+    def __init_widgets(self, csv=None):
         kvargs = { "width": self.width, "height": self.height }
         frame_wait = FrameWaitCard(self, **kvargs)
         frame_unlock = FrameCardUnlock(self, **kvargs)
-        frame_vault = FrameVault(self, **kvargs)
+        frame_vault = FrameVault(self, csv=csv, **kvargs)
 
         self.__frames = {
             "unlock": frame_unlock,

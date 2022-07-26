@@ -3,6 +3,7 @@
 import threading
 import queue
 import time
+import argparse
 
 from .card_io import CardSession
 from .gui import FederHMACCard
@@ -11,7 +12,10 @@ from .pubsub import publish, subscribe, exit_flag
 
 class App(threading.Thread):
 
-    def __init__(self):
+    def __init__(self, *args, **kvargs):
+        self.args = args
+        self.kvargs = kvargs
+
         threading.Thread.__init__(self)
         self.start()
         subscribe("exit", self.on_exit)
@@ -25,11 +29,15 @@ class App(threading.Thread):
         self.root.quit()
 
     def run(self):
-        self.root = FederHMACCard() 
+        self.root = FederHMACCard(*self.args, **self.kvargs) 
         self.root.protocol("WM_DELETE_WINDOW", self.callback)
         self.root.mainloop()
 
-app = App()
+parser = argparse.ArgumentParser()
+parser.add_argument("--csv", "-c", help="Use a csv file as a codebook.")
+args = parser.parse_args()
+
+app = App(csv=args.csv)
 
 ##############################################################################
 

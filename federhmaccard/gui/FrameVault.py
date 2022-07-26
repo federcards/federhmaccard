@@ -15,13 +15,13 @@ from ..pubsub import publish, subscribe
 
 class FrameVault(Frame):
 
-    def __init__(self, parent, *args, **kvargs):
+    def __init__(self, parent, csv=None, *args, **kvargs):
         Frame.__init__(self, parent, *args, **kvargs)
 
         self.vault_selector = VaultSelector(self)
         self.vault_selector.pack(side="top", fill="x", expand=False)
 
-        self.tabs = FrameVaultTabController(self)
+        self.tabs = FrameVaultTabController(self, csv=csv)
         self.tabs.pack(side="top", fill="both", expand=True)
 
         self.__bind_events()
