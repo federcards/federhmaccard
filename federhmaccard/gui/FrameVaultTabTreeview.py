@@ -7,6 +7,7 @@ from ..pubsub import publish, subscribe
 from ..password_request_uri import FederPRURI, FederPRURIAlgorithm,\
     FederPRURICombinations
 from .PasswordTreeview import PasswordTreeview
+from .PasswordResultDisplay import PasswordResultDisplay
 
 
 class TabTreeview(Frame):
@@ -16,6 +17,8 @@ class TabTreeview(Frame):
 
         self.treeview = PasswordTreeview(self, csv=csv)
         self.treeview.pack(expand=True, fill="both")
+
+        self.result = PasswordResultDisplay(self)
 
 
     """
