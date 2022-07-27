@@ -37,7 +37,6 @@ class FederPRURI:
             raise Exception("Not a valid FederPRURI.")
 
         qsparsed = parse_qs(parsed.query)
-        print(qsparsed)
 
         algorithm = FederPRURIAlgorithm.SHA1
         if "algorithm" in qsparsed:
@@ -59,13 +58,17 @@ class FederPRURI:
         if "combinations" in qsparsed:
             combinations = int(qsparsed["combinations"][0])
 
-        print("seed", seed)
+        length = 20
+        if "length" in qsparsed:
+            length = int(qsparsed["length"][0])
+            if length < 1:
+                raise Exception("Unsupported password length.")
 
-        return FederPRURI(algorithm, seed, combinations)
+        return FederPRURI(algorithm, seed, combinations, length)
 
 
 
-    def __init__(self, algorithm, seed, combinations):
+    def __init__(self, algorithm, seed, combinations, length):
         assert isinstance(algorithm, FederPRURIAlgorithm)
         assert type(seed) in [str, bytes]
         if isinstance(combinations, FederPRURICombinations):
@@ -76,6 +79,7 @@ class FederPRURI:
 
         self.algorithm = algorithm
         self.combinations = combinations & 0x0F
+        self.length = length
 
         if type(seed) == bytes:
             self.seed = seed
@@ -83,11 +87,12 @@ class FederPRURI:
             self.seed = seed.encode("ascii")
 
     def __str__(self):
-        return "%s://?seed=%s&algorithm=%s&combinations=%d" % (
+        return "%s://?seed=%s&algorithm=%s&combinations=%d&length=%d" % (
             SCHEME,
             quote_from_bytes(self.seed),
             self.algorithm.name,
-            self.combinations
+            self.combinations,
+            self.length
         )
 
 

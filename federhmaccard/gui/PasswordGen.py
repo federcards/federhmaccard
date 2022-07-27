@@ -5,10 +5,7 @@ from .ValueEntry import ValueEntry
 from .ValueCheck import ValueCheck
 from .PasswordResultDisplay import PasswordResultDisplay
 from ..seed_to_password import seed2password
-import hashlib
-import base64
 
-import pyperclip
 
 
 LENGTHS = [8, 12, 16, 20, 24, 28, 32, 64, 128]

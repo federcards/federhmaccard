@@ -7,7 +7,8 @@ from tkinter import ttk
 class PasswordTreeview(ttk.Treeview):
 
     def __init__(self, parent, csv, *args, **kvargs):
-        kvargs["show"] = "tree" 
+        kvargs["show"] = "tree"
+        kvargs["selectmode"] = "browse"
         kvargs["columns"] = ["#0", "Description", "URI"]
         ttk.Treeview.__init__(self, parent, *args, **kvargs)
 
@@ -24,6 +25,15 @@ class PasswordTreeview(ttk.Treeview):
         self.rows = {}
         self._load_csv(csv)
 
+        self.bind('<Double-1>', self.on_item_dblclick)
+        self.value = StringVar()
+
+    def on_item_dblclick(self, *args):
+        if len(self.selection()) < 1: return
+        sel_id = self.selection()[0]
+        if not sel_id in self.rows: return
+        title, uri, path = self.rows[sel_id]
+        self.value.set(uri)
 
     def _load_csv(self, csvpath):
         rows = []

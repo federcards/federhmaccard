@@ -8,6 +8,8 @@ from ..password_request_uri import FederPRURI, FederPRURIAlgorithm,\
     FederPRURICombinations
 from .PasswordTreeview import PasswordTreeview
 from .PasswordResultDisplay import PasswordResultDisplay
+from ..seed_to_password import seed2password
+from ..password_request_uri import FederPRURI
 
 
 class TabTreeview(Frame):
@@ -19,57 +21,15 @@ class TabTreeview(Frame):
         self.treeview.pack(expand=True, fill="both")
 
         self.result = PasswordResultDisplay(self)
+        self.result.pack(expand=True, fill="x", side="top")
 
+        self.treeview.value.trace_add("write", self.on_treeview_changed)
 
-    """
-        self.__bind_events()
-
-    def on_seed_invalidated(self, *args):
-        self.result.seed(None)
-
-    def on_generate_clicked(self, *args):
-        salt = bytes.fromhex(self.salt.hexvalue.get())
-        algo = ["sha1", "sha256"][self.algo.current()]
-        publish("card/do/vault/hmac-%s" % algo, salt)
-
-    def on_pru_changed(self, *args):
-        self.pru.config(bg="white")
-
-    def on_apply_pru(self, *args):
+    def on_treeview_changed(self, *args):
         try:
-            pru = FederPRURI.fromstring(self.pru.get())
-        except:
-            self.pru.config(bg="red")
+            pruri = FederPRURI.fromstring(self.treeview.value.get())
+        except Exception as e:
+            print(e)
             return
 
-        if pru.algorithm == FederPRURIAlgorithm.SHA256:
-            self.algo.current(1)
-        else:
-            self.algo.current(0)
-
-        self.salt.set_bytes_to_hex_value(pru.seed)
-
-        c = pru.combinations
-        self.result.charAZ.value.set(
-            bool(c & FederPRURICombinations.UPPERCASE.value))
-        self.result.charaz.value.set(
-            bool(c & FederPRURICombinations.LOWERCASE.value))
-        self.result.char09.value.set(
-            bool(c & FederPRURICombinations.NUMERICAL.value))
-        self.result.charspecial.value.set(
-            bool(c & FederPRURICombinations.SPECIAL.value))
-
-    def __bind_events(self):
-        subscribe("result/hmac/sha1", self.on_hmac_sha1_result)
-        subscribe("result/hmac/sha256", self.on_hmac_sha256_result)
-
-    def on_hmac_sha1_result(self, digest):
-        self.__show_result("SHA1", digest)
-
-    def on_hmac_sha256_result(self, digest):
-        self.__show_result("SHA256", digest)
-
-    def __show_result(self, algo, digest):
-        self.result.seed(digest)
-
-    """
+        print(pruri)
