@@ -17,11 +17,14 @@ class TabTreeview(Frame):
     def __init__(self, parent, csv=None, *args, **kvargs):
         Frame.__init__(self, parent, *args, **kvargs)
 
+        self.rowconfigure(0, weight=1)
+        self.columnconfigure(0, weight=1)
+
         self.treeview = PasswordTreeview(self, csv=csv)
-        self.treeview.pack(expand=True, fill="both")
+        self.treeview.grid(row=0, column=0, sticky="news")
 
         self.result = PasswordResultDisplay(self)
-        self.result.pack(expand=True, fill="x", side="top")
+        self.result.grid(row=1, column=0, sticky="news")
 
         self.__old_sel = None
         self.treeview.bind("<<TreeviewSelect>>", self.on_treeview_selected)
