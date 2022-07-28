@@ -78,7 +78,7 @@ class TabPasswordgen(Frame):
     def on_generate_clicked(self, *args):
         salt = bytes.fromhex(self.salt.hexvalue.get())
         algo = ["sha1", "sha256"][self.algo.current()]
-        publish("card/do/vault/hmac-%s" % algo, salt)
+        publish("card/do/vault/hmac-%s#passwordgen" % algo, salt)
 
     def on_pru_changed(self, *args):
         self.pru.config(bg="white")
@@ -108,8 +108,8 @@ class TabPasswordgen(Frame):
             bool(c & FederPRURICombinations.SPECIAL.value))
 
     def __bind_events(self):
-        subscribe("result/hmac/sha1", self.on_hmac_sha1_result)
-        subscribe("result/hmac/sha256", self.on_hmac_sha256_result)
+        subscribe("result/hmac/sha1#passwordgen", self.on_hmac_sha1_result)
+        subscribe("result/hmac/sha256#passwordgen", self.on_hmac_sha256_result)
 
     def on_hmac_sha1_result(self, digest):
         self.__show_result("SHA1", digest)

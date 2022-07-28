@@ -148,21 +148,28 @@ def call_vault_totp_sha1(seed):
 subscribe("card/do/vault/totp-sha1", call_vault_totp_sha1)
 
 
-def call_vault_hmac_sha1(seed):
+def subscribe_hmac(caller):
     global card_session, vault
-    if not card_session or not vault: return
-    result = vault.HMAC_SHA1(_assert_bytes(seed))
-    if not result:
-        return publish("error/vault/locked")
-    publish("result/hmac/sha1", result)
-subscribe("card/do/vault/hmac-sha1", call_vault_hmac_sha1)
+
+    def call_vault_hmac_sha1(seed):
+        global card_session, vault
+        if not card_session or not vault: return
+        result = vault.HMAC_SHA1(_assert_bytes(seed))
+        if not result:
+            return publish("error/vault/locked")
+        publish("result/hmac/sha1#%s" % caller, result)
+    subscribe("card/do/vault/hmac-sha1#%s" % caller, call_vault_hmac_sha1)
 
 
-def call_vault_hmac_sha256(seed):
-    global card_session, vault
-    if not card_session or not vault: return
-    result = vault.HMAC_SHA256(_assert_bytes(seed))
-    if not result:
-        return publish("error/vault/locked")
-    publish("result/hmac/sha256", result)
-subscribe("card/do/vault/hmac-sha256", call_vault_hmac_sha256)
+    def call_vault_hmac_sha256(seed):
+        global card_session, vault
+        if not card_session or not vault: return
+        result = vault.HMAC_SHA256(_assert_bytes(seed))
+        if not result:
+            return publish("error/vault/locked")
+        publish("result/hmac/sha256#%s" % caller, result)
+    subscribe("card/do/vault/hmac-sha256#%s" % caller, call_vault_hmac_sha256)
+
+
+subscribe_hmac("passwordgen")
+subscribe_hmac("codebook")
