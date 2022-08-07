@@ -5,7 +5,7 @@ from setuptools import find_namespace_packages
 
 setup(
     name="federhmaccard",
-    version="1.0",
+    version="1.1",
     packages=find_namespace_packages(
         where=".",
         exclude=["zccard"],
