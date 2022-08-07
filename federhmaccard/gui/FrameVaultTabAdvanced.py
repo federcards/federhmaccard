@@ -107,6 +107,7 @@ class TabAdvanced(Frame):
         if simpledialog.askstring("Confirm again", "Type the word CONFIRM in uppercase to continue.", parent=self) != "CONFIRM":
             return
 
+        self.import_secret.clear()
         publish("card/do/vault/import", newsecret)
         
 

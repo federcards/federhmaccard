@@ -40,9 +40,9 @@ class FederPRURI:
 
         algorithm = FederPRURIAlgorithm.SHA1
         if "algorithm" in qsparsed:
-            if qsparsed["algorithm"] == "SHA256":
+            if qsparsed["algorithm"].upper() == "SHA256":
                 algorithm = FederPRURIAlgorithm.SHA256
-            elif qsparsed["algorithm"] != 'SHA1':
+            elif qsparsed["algorithm"].upper() != 'SHA1':
                 raise Exception("Unsupported hash algorithm.")
 
         seed = b""
@@ -56,11 +56,11 @@ class FederPRURI:
             FederPRURICombinations.SPECIAL.value )
             
         if "combinations" in qsparsed:
-            combinations = int(qsparsed["combinations"][0])
+            combinations = int(qsparsed["combinations"])
 
         length = 20
         if "length" in qsparsed:
-            length = int(qsparsed["length"][0])
+            length = int(qsparsed["length"])
             if length < 1:
                 raise Exception("Unsupported password length.")
 

@@ -1,4 +1,4 @@
-My email,federpr://?seed=123456,Internet
+My email,federpr://?seed=123456,Internet,
 username1@website1.com,federpr://?seed=12345678,Internet,Forum
-username2@website2.com,federpr://?seed=456789ab,Internet,Forum
-bank1,federpr://?seed=deadbeef,Internet,Banking
+username2@website2.com,federpr://?seed=456789ab&combinations=7,Internet,Forum
+bank1,federpr://?seed=deadbeef&algorithm=SHA256&length=32,Internet,Banking

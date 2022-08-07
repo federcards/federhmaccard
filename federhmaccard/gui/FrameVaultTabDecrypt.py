@@ -13,7 +13,7 @@ class TabDecrypt(Frame):
         self.lbl_prompt = Label(self, text="Password:")
         self.lbl_prompt.grid(column=0, row=0, padx=10, pady=20, sticky="e")
 
-        self.txt_password = ValueEntry(self)
+        self.txt_password = ValueEntry(self, show="*")
         self.txt_password.grid(column=1, row=0, padx=10, pady=20, sticky="ew")
         self.txt_password.value.set("password")
 

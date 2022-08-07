@@ -41,6 +41,8 @@ class PasswordTreeview(ttk.Treeview):
         with open(csvpath, newline="") as csvfile:
             csvreader = csv.reader(csvfile)
             for row in csvreader:
+                while row and row[-1] == "":    
+                    row = row[:-1]
                 if len(row) < 2: continue
                 title = row[0]
                 uri = row[1]

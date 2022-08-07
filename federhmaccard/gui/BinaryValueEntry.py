@@ -35,6 +35,9 @@ class BinaryValueEntry(Frame):
 
         self.onchanged = None
 
+    def clear(self):
+        self.entry.value.set("")
+
     def set_bytes_to_hex_value(self, b):
         self.entry.value.set(b.hex())
         self.encoding.current(ENCODINGS.index("HEX"))
