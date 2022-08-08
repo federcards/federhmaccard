@@ -42,6 +42,7 @@ EEPROM __authentication_password as string*(3*AUTHENTICATION_SECRET_SIZE)=_
 
 public __authentication_initialized as Integer
 public __authentication_verified as Integer
+public authentication_write_enabled as Integer
 
 type authentication_session_state
     nonce as string*AUTHENTICATION_TOKEN_SIZE
@@ -83,6 +84,7 @@ end function
 
 sub authentication_reset_state()
     __authentication_verified = False
+	authentication_write_enabled = False
 
     dim authentication_password as string
     authentication_password = authentication_get_password()
@@ -117,6 +119,16 @@ function authentication_verify(byval answer as string*AUTHENTICATION_TOKEN_SIZE)
         call authentication_reset_state()
         authentication_verify = "ERR"
     end if        
+end function
+
+
+function authentication_write_enable() as string
+	if authentication_verified() = False then
+		authentication_write_enable = "ERR"
+		exit function
+	end if
+	authentication_write_enabled = True
+	authentication_write_enable = "OK"
 end function
 
 

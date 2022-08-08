@@ -71,6 +71,11 @@ end function
 
 
 function vault_import(byval vault_id as byte, byval secret as string) as string
+	if authentication_write_enabled <> True then
+		vault_import = "ERR,read only"
+		exit function
+	end if
+
     if len(secret) > VAULT_PLAIN_MAX_SIZE then
         vault_import = "ERR,too long"
         exit function
@@ -86,6 +91,11 @@ end function
 
 
 function vault_reencrypt(byval newpassword as string) as string
+	if authentication_write_enabled <> True then
+		vault_reencrypt = "ERR,read only"
+		exit function
+	end if
+
     if 0 = __vault_current_id then
         vault_reencrypt = "ERR,no opened vault"
         exit function
@@ -125,4 +135,9 @@ end sub
 
 function vault_status() as string
     vault_status = "OK," + chr$(__vault_current_id)
+	if authentication_write_enabled then
+		vault_status = vault_status + "," + "W"
+	else
+		vault_status = vault_status + "," + "R"
+	end if	
 end function

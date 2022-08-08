@@ -8,6 +8,7 @@ declare command &H88 &H00 Greet(LC=0, data as string)
 
 declare command &H88 &H84 FC_GET_CHALLENGE(LC=0, data as string)
 declare command &H88 &H20 FC_VERIFY(data as string)
+declare command &H88 &H22 FC_WRITE_ENABLE(LC=0, data as string)
 
 
 declare command &H84 &H24 FC_CHANGE_PASSWORD(data as string)

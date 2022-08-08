@@ -43,8 +43,8 @@ Option Explicit
 #include lib/crypto.bas
 #include lib/hashcash_guardian.bas
 
-#include vault.bas
 #include authentication.bas
+#include vault.bas
 #include factory.bas
 
 
@@ -81,12 +81,18 @@ command &H88 &H84 FC_GET_CHALLENGE(LC=0, data as string)
 end command
 
 
-
 command &H88 &H20 FC_VERIFY(data as string)
     dim verification_data as string*32
     verification_data = Left$(data, 32)
     data = authentication_verify(verification_data)
 end command
+
+
+command &H88 &H22 FC_WRITE_ENABLE(LC=0, data as string)
+	data = authentication_write_enable()
+end command
+
+
 
 
 command &H84 &H24 FC_CHANGE_PASSWORD(data as string)
@@ -95,6 +101,9 @@ command &H84 &H24 FC_CHANGE_PASSWORD(data as string)
             authentication_decrypt_message(data)))
 end command
 
+
+
+	
 
 
 

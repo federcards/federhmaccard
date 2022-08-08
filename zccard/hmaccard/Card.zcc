@@ -19,6 +19,20 @@ Hex=false
 Length=46
 Visible=false
 
+[EEPROM]
+Block0=B^Rh@6a-1HkVr]_=V;EN&gt;s`MDK;{3mu|5/:&gt;`oXh(($?&gt;5K\2`30gCb8tl5`GTcr[KJVZJQ
+Block1=4]jr^Wx:1/mbi5B)uHM]YXj#wX&lt;)}dozc+$Rd^+.j;&lt;-xSNBWsblDC-&apos;@:\iyItgW+%w*H?
+Block2=@&apos;m=&gt;lR%RVZlg.Jyl7e)c9%ZJt/Ub&quote;_X^$*0)JbQ=5&gt;W0~%*Ae_a_VR`8,Mh{ckl#%u_&quote;_N
+Block3=2t#;&amp;l5cJE|{pjujmj[HXy5IKI]mfti7Q3G,)&apos;ePX0l@ps3;CX}Wm3rv}5y*e^DWBf|hEp,
+Block4=1urI].XsFCSIU&amp;X?S3.{Pj!PU\en%&gt;d%f&apos;J&apos;Bl|#R~d8$?ox.YL5s!&quote;QE1h_G]Kju&apos;9/1&apos;Y
+Block5=8PU4`q&gt;r7%&apos;NA&lt;zZ,:t*Z\-y1^z3nv:&lt;@uqIAug.,g8&lt;[Z5QGLf?9c4-%%l*;-+A\XzBC#Y
+Block6=5r4p|&quote;3SSpBXSX+;)!H-\\k%/l\?TgJJ92^.Cj=(bmnJOEB[^-cW|b{3#B,v&quote;L$5uW:!-jS
+Block7=-0{yb0wE{e
+CRC=0x1efe871e
+Length=418
+MaskCRC=2047249619
+StartCRC=3109389496
+
 [Files Window]
 Block0=&quote;=my,fAB7L,_jjgu_+=LR*|&quote;L9:PS4]U6Og+$)Bp2G97rgrVDtb#jo:C
 CRC=0x7ca99f0b

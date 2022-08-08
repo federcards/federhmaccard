@@ -133,6 +133,7 @@ print "5. calculate HMAC-SHA256"
 print "6. close vault"
 print "7. factory reset"
 print "8. change card password"
+print "9. enable card write"
 print ""
 print "Your choice?"
 
@@ -147,6 +148,7 @@ if 5 = menu_choice then goto VAULT_SHA256
 if 6 = menu_choice then goto VAULT_CLOSE
 if 7 = menu_choice then goto FACTORY_RESET
 if 8 = menu_choice then goto CHANGE_CARD_PASSWORD
+if 9 = menu_choice then goto ENABLE_CARD_WRITE
 
 goto MENU
 
@@ -276,6 +278,19 @@ else
 end if
 
 input menu_choice : goto START
+
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+ENABLE_CARD_WRITE:
+
+call FC_WRITE_ENABLE(data$) : call CheckSW1SW2()
+if data$ = "OK" then
+    print "Card write enabled."
+else
+    print "Card write not enabled. Need login first."
+end if
+
+input menu_choice : goto MENU
 
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 DONE:
